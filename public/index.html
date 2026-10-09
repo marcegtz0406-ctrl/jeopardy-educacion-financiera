@@ -119,9 +119,9 @@
 
   <!-- Cabecera con Logos -->
   <header class="header-bar">
-    <img src="logo1.jpg" alt="Logo 1" onerror="this.style.display='none'">
+    <img src="logo1.jpg" alt="Logo UACM" onerror="this.style.display='none'">
     <h1 class="header-title">JEOPARDY: EDUCACIÓN FINANCIERA</h1>
-    <img src="logo2.jpg" alt="Logo 2" onerror="this.style.display='none'">
+    <img src="logo2.jpg" alt="Logo CA" onerror="this.style.display='none'">
   </header>
 
   <!-- Tablero del Juego -->
@@ -165,7 +165,6 @@
     // Configuración de Voz en Español Latinoamericano / México
     function obtenerVozLatinoamericana() {
       const voices = window.speechSynthesis.getVoices();
-      // Prioridad: México (es-MX), América Latina (es-419), EE.UU. Latino (es-US)
       return voices.find(v => v.lang === 'es-MX') ||
              voices.find(v => v.lang === 'es-419') ||
              voices.find(v => v.lang === 'es-US') ||
@@ -177,18 +176,17 @@
       const texto = document.getElementById('reflexionText').innerText;
       if (!texto) return;
 
-      window.speechSynthesis.cancel(); // Detener cualquier lectura anterior
+      window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(texto);
       
       const voz = obtenerVozLatinoamericana();
       if (voz) utterance.voice = voz;
 
-      utterance.rate = 0.95; // Velocidad fluida
+      utterance.rate = 0.95;
       utterance.pitch = 1.0;
       window.speechSynthesis.speak(utterance);
     }
 
-    // Asegurar la carga de voces en navegadores basados en Chromium
     if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
       speechSynthesis.onvoiceschanged = obtenerVozLatinoamericana;
     }
