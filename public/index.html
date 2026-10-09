@@ -90,7 +90,7 @@
 </head>
 <body>
 
-  <!-- 1. Modal de Instrucciones al Iniciar -->
+  <!-- Modal de Instrucciones Inicial -->
   <div id="modalInstructions" class="modal-instructions">
     <div class="modal-content-inst">
       <h2>🎬 Reglas de Educación Financiera</h2>
@@ -156,7 +156,7 @@
 
     <!-- Main Jeopardy Board Requerido por host.js -->
     <main class="board-container">
-      <div class="board" id="board">
+      <div class="board-grid" id="board-grid">
         <!-- Generado dinámicamente vía host.js -->
       </div>
     </main>
@@ -179,6 +179,14 @@
 
         <div class="modal-body">
           <p id="modal-question-text" class="question-text">Texto de la pregunta...</p>
+
+          <!-- Opciones A, B, C, D para host.js -->
+          <div class="options-grid">
+            <div id="opt-card-A" class="option-card"><strong>A:</strong> <span id="opt-text-A"></span></div>
+            <div id="opt-card-B" class="option-card"><strong>B:</strong> <span id="opt-text-B"></span></div>
+            <div id="opt-card-C" class="option-card"><strong>C:</strong> <span id="opt-text-C"></span></div>
+            <div id="opt-card-D" class="option-card"><strong>D:</strong> <span id="opt-text-D"></span></div>
+          </div>
           
           <div id="buzzer-status-banner" class="buzzer-banner state-idle">
             <div class="buzzer-status-icon">⏸️</div>
@@ -227,7 +235,7 @@
       </div>
     </div>
 
-    <!-- QR Code Modal -->
+    <!-- QR Code Modal Requerido por host.js -->
     <div id="qr-modal" class="modal-overlay hidden">
       <div class="modal-content qr-modal-box">
         <h2>Únete con tu Celular</h2>
@@ -238,7 +246,7 @@
           <input type="text" id="qr-url-input" readonly>
           <button id="btn-copy-qr-url" class="btn btn-zoom">Copiar</button>
         </div>
-        <button id="btn-close-qr-modal" class="btn btn-action btn-close" style="margin-top: 15px;">Cerrar</button>
+        <button id="btn-close-qr" class="btn btn-action btn-close" style="margin-top: 15px;">Cerrar</button>
       </div>
     </div>
   </div>
@@ -249,7 +257,7 @@
       document.getElementById('modalInstructions').style.display = 'none';
     }
 
-    // Voz Latinoamericana (México / LATAM)
+    // Configuración de Voz Latinoamericana (México / LATAM)
     function obtenerVozLatinoamericana() {
       const voices = window.speechSynthesis.getVoices();
       return voices.find(v => v.lang === 'es-MX') ||
