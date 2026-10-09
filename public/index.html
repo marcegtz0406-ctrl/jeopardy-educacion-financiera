@@ -5,24 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jeopardy: Educación Financiera - Estudio A</title>
   <link rel="stylesheet" href="host.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@500;700&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
   <script src="/socket.io/socket.io.js"></script>
   <style>
-    /* Cabecera personalizada con Logos */
-    .top-header {
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      padding: 10px 20px !important;
-      background: rgba(12, 18, 32, 0.95) !important;
-      border-bottom: 2px solid #d4af37 !important;
-    }
-    .header-logo-img {
-      max-height: 55px;
-      object-fit: contain;
-      border-radius: 6px;
-    }
-
     /* Modal de Instrucciones Inicial */
     .modal-instructions {
       position: fixed;
@@ -30,32 +15,32 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.88);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 2000;
     }
     .modal-content-inst {
-      background: #131b2e;
+      background: #1e293b;
       color: #f8fafc;
       padding: 28px;
       border-radius: 14px;
       max-width: 650px;
       width: 90%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      border: 2px solid #d4af37;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      border: 1px solid #3b82f6;
       font-family: 'Montserrat', sans-serif;
     }
     .modal-content-inst h2 {
-      color: #f5c518;
+      color: #60a5fa;
       margin-top: 0;
       font-size: 1.6rem;
-      border-bottom: 1px solid #1c2742;
+      border-bottom: 1px solid #334155;
       padding-bottom: 10px;
     }
     .branch-card {
-      background: #0a0e17;
+      background: #0f172a;
       padding: 12px 16px;
       border-radius: 8px;
       margin: 12px 0;
@@ -71,24 +56,29 @@
       margin-bottom: 4px;
     }
     .btn-start-game {
-      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      background: #22c55e;
       color: white;
       border: none;
-      padding: 14px 24px;
+      padding: 12px 24px;
       font-size: 1.1rem;
       font-weight: bold;
       border-radius: 8px;
       cursor: pointer;
       width: 100%;
       margin-top: 15px;
-      transition: transform 0.2s;
+      transition: background 0.2s;
     }
     .btn-start-game:hover {
-      transform: translateY(-2px);
+      background: #16a34a;
+    }
+    .header-logo-custom {
+      max-height: 50px;
+      object-fit: contain;
+      border-radius: 4px;
     }
   </style>
 </head>
-<body class="cinema-theme">
+<body>
 
   <!-- Modal de Instrucciones Inicial -->
   <div id="modalInstructions" class="modal-instructions">
@@ -115,29 +105,29 @@
   </div>
 
   <div id="app">
-    <!-- Top Navigation Header con Logos -->
+    <!-- Top Navigation Header -->
     <header class="top-header">
-      <img src="logo1.jpg" alt="Logo UACM" class="header-logo-img" onerror="this.style.display='none'">
-      
-      <div class="logo-area" style="text-align: center;">
-        <span class="game-badge" style="color: #f5c518; font-size: 0.8rem; font-weight: bold;">🎬 SET DE CINE: ESTUDIO A</span>
-        <h1 style="margin: 0; font-size: 1.6rem; color: #fff; font-family: 'Cinzel', serif;">JEOPARDY: EDUCACIÓN FINANCIERA</h1>
+      <img src="logo1.jpg" alt="Logo 1" class="header-logo-custom" onerror="this.style.display='none'">
+
+      <div class="logo-area">
+        <span class="game-badge">🎬 SET DE CINE: ESTUDIO A</span>
+        <h1>JEOPARDY: EDUCACIÓN FINANCIERA</h1>
       </div>
 
-      <img src="logo2.jpg" alt="Logo CA" class="header-logo-img" onerror="this.style.display='none'">
+      <img src="logo2.jpg" alt="Logo 2" class="header-logo-custom" onerror="this.style.display='none'">
 
       <div class="header-actions">
-        <button id="btn-copy-zoom" class="btn btn-zoom" title="Copiar mensaje y enlace para Zoom">📋 Copiar Link</button>
-        <button id="btn-show-qr" class="btn btn-info" title="Mostrar Código QR">📱 Código QR</button>
-        <button id="btn-final-jeopardy" class="btn btn-final" title="Ir a Pregunta Final">🏆 Final Jeopardy</button>
-        <button id="btn-end-game" class="btn btn-podium" title="Ver Ganador">👑 Finalizar</button>
-        <button id="btn-sound-toggle" class="btn btn-icon">🔊</button>
-        <button id="btn-fullscreen" class="btn btn-icon">⛶</button>
+        <button id="btn-copy-zoom" class="btn btn-zoom" title="Copiar mensaje y enlace para el chat de Zoom">📋 Copiar Link de Zoom</button>
+        <button id="btn-show-qr" class="btn btn-info" title="Mostrar Código QR en grande">📱 Código QR</button>
+        <button id="btn-final-jeopardy" class="btn btn-final" title="Ir a la Pregunta Final">🏆 Final Jeopardy</button>
+        <button id="btn-end-game" class="btn btn-podium" title="Finalizar partida">👑 Finalizar y Ver Ganador</button>
+        <button id="btn-sound-toggle" class="btn btn-icon" title="Silenciar / Activar sonido">🔊</button>
+        <button id="btn-fullscreen" class="btn btn-icon" title="Pantalla Completa">⛶</button>
         <button id="btn-reset" class="btn btn-icon btn-danger" title="Reiniciar Tablero">🔄</button>
       </div>
     </header>
 
-    <!-- Subheader con estado de conexión -->
+    <!-- Subheader with connection info -->
     <div class="connection-bar">
       <div class="conn-item">
         <span class="conn-dot"></span>
@@ -148,20 +138,18 @@
       </div>
       <div class="conn-item url-display">
         <span>Link para Alumnos: <strong id="active-url-text">Cargando enlace...</strong></span>
-        <span id="tunnel-pass-box" class="tunnel-pass-box hidden">
-          🔑 Clave: <strong id="tunnel-pass-val"></strong>
-        </span>
+        <span id="tunnel-pass-box" class="tunnel-pass-box hidden">🔑 Clave: <strong id="tunnel-pass-val"></strong></span>
       </div>
     </div>
 
-    <!-- Main Jeopardy Board con soporte para host.css -->
+    <!-- Main Jeopardy Board -->
     <main class="board-container">
       <div class="board-grid" id="board-grid">
-        <!-- Se genera dinámicamente -->
+        <!-- Generated dynamically via host.js -->
       </div>
     </main>
 
-    <!-- Marcador de Equipos en Vivo -->
+    <!-- Bottom Scoreboard -->
     <footer class="scoreboard-footer">
       <div class="scoreboard-title">MARCADOR EN VIVO:</div>
       <div class="teams-container" id="teams-container">
@@ -169,7 +157,7 @@
       </div>
     </footer>
 
-    <!-- Question Modal Requerido por host.js -->
+    <!-- Question Modal -->
     <div id="question-modal" class="modal-overlay hidden">
       <div class="modal-content">
         <div class="modal-header">
@@ -181,17 +169,17 @@
           <p id="modal-question-text" class="question-text">Texto de la pregunta...</p>
 
           <div class="options-grid">
-            <div id="opt-card-A" class="option-card"><strong>A:</strong> <span id="opt-text-A"></span></div>
-            <div id="opt-card-B" class="option-card"><strong>B:</strong> <span id="opt-text-B"></span></div>
-            <div id="opt-card-C" class="option-card"><strong>C:</strong> <span id="opt-text-C"></span></div>
-            <div id="opt-card-D" class="option-card"><strong>D:</strong> <span id="opt-text-D"></span></div>
+            <div id="opt-card-A" class="option-card"><span id="opt-text-A"></span></div>
+            <div id="opt-card-B" class="option-card"><span id="opt-text-B"></span></div>
+            <div id="opt-card-C" class="option-card"><span id="opt-text-C"></span></div>
+            <div id="opt-card-D" class="option-card"><span id="opt-text-D"></span></div>
           </div>
           
           <div id="buzzer-status-banner" class="buzzer-banner state-idle">
             <div class="buzzer-status-icon">⏸️</div>
             <div class="buzzer-status-info">
               <h3 id="buzzer-headline">Buzzer en Espera</h3>
-              <p id="buzzer-subtext">Lee la pregunta y presiona "Activar Buzzer".</p>
+              <p id="buzzer-subtext">Lee la pregunta por Zoom y presiona "Activar Buzzer".</p>
             </div>
             <div id="buzzer-reaction-time" class="reaction-badge hidden">0.00s</div>
           </div>
@@ -212,14 +200,10 @@
                 <strong>Reflexión DeepSeek (Educación Financiera):</strong>
               </div>
               <div class="ai-actions">
-                <button id="btn-speak-reflection" class="btn-ai-speak" onclick="hablarReflexion()" title="Leer en voz alta">
-                  🎙️ Leer en Voz Alta
-                </button>
+                <button id="btn-speak-reflection" class="btn-ai-speak" onclick="hablarReflexion()" title="Leer en voz alta">🎙️ Leer en Voz Alta</button>
               </div>
             </div>
-            <div id="ai-reflection-text" class="ai-reflection-text">
-              Cargando reflexión...
-            </div>
+            <div id="ai-reflection-text" class="ai-reflection-text">Haz clic en "Reflexión IA" para obtener un análisis pedagógico.</div>
           </div>
         </div>
 
@@ -234,10 +218,10 @@
       </div>
     </div>
 
-    <!-- QR Code Modal Requerido por host.js -->
+    <!-- QR Code Modal -->
     <div id="qr-modal" class="modal-overlay hidden">
       <div class="modal-content qr-modal-box">
-        <h2>Únete con tu Celular</h2>
+        <h2>Únete con tu Celular o Pestaña</h2>
         <div class="qr-image-wrapper">
           <img id="qr-code-img" src="" alt="Código QR">
         </div>
@@ -248,68 +232,42 @@
         <button id="btn-close-qr" class="btn btn-action btn-close" style="margin-top: 15px;">Cerrar</button>
       </div>
     </div>
+
+    <!-- Final Jeopardy Modal -->
+    <div id="final-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h2>🏆 FINAL JEOPARDY</h2>
+        <p id="final-question-text"></p>
+        <div id="final-options-grid" class="options-grid"></div>
+        <div id="final-guide-box" class="guide-box hidden">
+          <p id="final-answer-text"></p>
+          <span id="final-guide-text"></span>
+        </div>
+        <div class="modal-controls">
+          <button id="btn-final-activate" class="btn btn-action btn-activate">⚡ Activar Buzzer</button>
+          <button id="btn-final-reveal" class="btn btn-action btn-reveal">👁️ Ver Respuesta</button>
+          <button id="btn-final-close" class="btn btn-action btn-close">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Podium Modal -->
+    <div id="podium-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h2>👑 GANADORES DE LA TRIVIA</h2>
+        <div id="podium-stage"></div>
+        <div id="podium-full-list"></div>
+        <button id="btn-close-podium" class="btn btn-action btn-close">Volver al Juego</button>
+      </div>
+    </div>
   </div>
 
   <script src="host.js"></script>
   <script>
     function cerrarInstrucciones() {
       document.getElementById('modalInstructions').style.display = 'none';
-      construirTableroGarantizado();
     }
 
-    async function construirTableroGarantizado() {
-      const grid = document.getElementById('board-grid');
-      if (!grid || grid.children.length > 0) return;
-
-      try {
-        const [resQ, resState] = await Promise.all([
-          fetch('/api/questions'),
-          fetch('/api/state')
-        ]);
-        const questionsData = await resQ.json();
-        const stateData = await resState.json();
-
-        grid.innerHTML = '';
-        questionsData.categorias.forEach((cat, catIndex) => {
-          const col = document.createElement('div');
-          col.className = 'board-column';
-
-          const catCard = document.createElement('div');
-          catCard.className = 'category-card';
-          catCard.innerHTML = `
-            <span class="category-icon">${cat.icono || '🎬'}</span>
-            <span class="category-title">${cat.nombre}</span>
-          `;
-          col.appendChild(catCard);
-
-          cat.preguntas.forEach((q, qIndex) => {
-            const isAnswered = stateData.board && stateData.board[catIndex] && stateData.board[catIndex][qIndex];
-            const pointCard = document.createElement('div');
-            pointCard.className = `point-card ${isAnswered ? 'answered' : ''}`;
-            pointCard.innerHTML = `<span class="point-value">$${q.puntos}</span>`;
-
-            if (!isAnswered) {
-              pointCard.onclick = () => {
-                if (typeof socket !== 'undefined') {
-                  socket.emit('open-question', { catIndex, qIndex });
-                }
-              };
-            }
-            col.appendChild(pointCard);
-          });
-
-          grid.appendChild(col);
-        });
-      } catch (err) {
-        console.error("Error al forzar la carga del tablero:", err);
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(construirTableroGarantizado, 600);
-    });
-
-    // Configuración de Voz Latinoamericana (México / LATAM)
     function obtenerVozLatinoamericana() {
       const voices = window.speechSynthesis.getVoices();
       return voices.find(v => v.lang === 'es-MX') ||
@@ -320,13 +278,11 @@
     }
 
     function hablarReflexion() {
-      const el = document.getElementById('ai-reflection-text') || document.getElementById('reflexionText');
-      if (!el) return;
-      const texto = el.innerText;
-      if (!texto) return;
+      const el = document.getElementById('ai-reflection-text');
+      if (!el || !el.innerText) return;
 
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(texto);
+      const utterance = new SpeechSynthesisUtterance(el.innerText);
       const voz = obtenerVozLatinoamericana();
       if (voz) utterance.voice = voz;
       utterance.rate = 0.95;
