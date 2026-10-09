@@ -157,7 +157,7 @@
     <!-- Main Jeopardy Board Requerido por host.js -->
     <main class="board-container">
       <div class="board-grid" id="board-grid">
-        <!-- Generado dinámicamente vía host.js o fallback API -->
+        <!-- Generado dinámicamente vía host.js o respaldo automático -->
       </div>
     </main>
 
@@ -254,22 +254,24 @@
   <script>
     function cerrarInstrucciones() {
       document.getElementById('modalInstructions').style.display = 'none';
-      // Forzar renderizado si aún no ha pintado el tablero
-      if (document.getElementById('board-grid') && document.getElementById('board-grid').children.length === 0) {
-        cargarTableroAPI();
-      }
+      construirTableroGarantizado();
     }
 
-    // Carga de respaldo vía API REST por si el WebSocket tarda
-    async function cargarTableroAPI() {
+    // Construcción forzada del tablero si Socket.io aún no ha renderizado
+    async function construirTableroGarantizado() {
+      const grid = document.getElementById('board-grid');
+      if (!grid || grid.children.length > 0) return;
+
       try {
-        const res = await fetch('/api/questions');
-        const data = await res.json();
-        const grid = document.getElementById('board-grid');
-        if (!grid || grid.children.length > 0) return;
+        const [resQ, resState] = await Promise.all([
+          fetch('/api/questions'),
+          fetch('/api/state')
+        ]);
+        const questionsData = await resQ.json();
+        const stateData = await resState.json();
 
         grid.innerHTML = '';
-        data.categorias.forEach((cat, catIndex) => {
+        questionsData.categorias.forEach((cat, catIndex) => {
           const col = document.createElement('div');
           col.className = 'board-column';
 
@@ -282,27 +284,31 @@
           col.appendChild(catCard);
 
           cat.preguntas.forEach((q, qIndex) => {
+            const isAnswered = stateData.board && stateData.board[catIndex] && stateData.board[catIndex][qIndex];
             const pointCard = document.createElement('div');
-            pointCard.className = 'point-card';
+            pointCard.className = `point-card ${isAnswered ? 'answered' : ''}`;
             pointCard.innerHTML = `<span class="point-value">$${q.puntos}</span>`;
-            pointCard.onclick = () => {
-              if (typeof socket !== 'undefined') {
-                socket.emit('open-question', { catIndex, qIndex });
-              }
-            };
+
+            if (!isAnswered) {
+              pointCard.onclick = () => {
+                if (typeof socket !== 'undefined') {
+                  socket.emit('open-question', { catIndex, qIndex });
+                }
+              };
+            }
             col.appendChild(pointCard);
           });
 
           grid.appendChild(col);
         });
       } catch (err) {
-        console.error("Error al cargar preguntas vía API:", err);
+        console.error("Error al forzar la carga del tablero:", err);
       }
     }
 
-    // Intentar cargar inmediatamente al iniciar
+    // Ejecutar intento automático tras cargar el DOM
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(cargarTableroAPI, 800);
+      setTimeout(construirTableroGarantizado, 500);
     });
 
     // Configuración de Voz Latinoamericana (México / LATAM)
