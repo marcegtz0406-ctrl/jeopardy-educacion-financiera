@@ -3,30 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jeopardy - Educación Financiera</title>
+  <title>Jeopardy: Educación Financiera - Estudio A</title>
   <link rel="stylesheet" href="host.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+  <script src="/socket.io/socket.io.js"></script>
   <style>
-    /* Estilos de la Cabecera con Logos */
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      background: rgba(15, 23, 42, 0.9);
-      border-bottom: 2px solid #3b82f6;
+    /* Cabecera personalizada con Logos */
+    .top-header {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 8px 20px !important;
+      background: rgba(15, 23, 42, 0.95) !important;
+      border-bottom: 2px solid #3b82f6 !important;
     }
-    .header-bar img {
-      max-height: 65px;
+    .header-logo-img {
+      max-height: 55px;
       object-fit: contain;
       border-radius: 6px;
-    }
-    .header-title {
-      color: #fff;
-      font-size: 1.8rem;
-      margin: 0;
-      text-align: center;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
     }
 
     /* Modal de Instrucciones Inicial */
@@ -36,21 +30,22 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.88);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      z-index: 2000;
     }
     .modal-content-inst {
       background: #1e293b;
       color: #f8fafc;
-      padding: 30px;
-      border-radius: 12px;
+      padding: 28px;
+      border-radius: 14px;
       max-width: 650px;
       width: 90%;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
       border: 1px solid #3b82f6;
+      font-family: 'Montserrat', sans-serif;
     }
     .modal-content-inst h2 {
       color: #60a5fa;
@@ -61,16 +56,18 @@
     }
     .branch-card {
       background: #0f172a;
-      padding: 12px 15px;
+      padding: 12px 16px;
       border-radius: 8px;
-      margin: 10px 0;
+      margin: 12px 0;
       border-left: 4px solid #ef4444;
+      text-align: left;
     }
     .branch-card.branch-b {
       border-left-color: #22c55e;
     }
     .branch-title {
       font-weight: bold;
+      font-size: 1rem;
       margin-bottom: 4px;
     }
     .btn-start-game {
@@ -93,7 +90,7 @@
 </head>
 <body>
 
-  <!-- Modal de Instrucciones al iniciar -->
+  <!-- 1. Modal de Instrucciones al Iniciar -->
   <div id="modalInstructions" class="modal-instructions">
     <div class="modal-content-inst">
       <h2>🎬 Reglas de Educación Financiera</h2>
@@ -101,70 +98,158 @@
       
       <div class="branch-card">
         <div class="branch-title" style="color: #f87171;">⚠️ Branch A: Gastar en Deseos e Impulsos</div>
-        <small>Priorizar gustos irrelevantes antes de asegurar los compromisos básicos genera inestabilidad, riesgo de quiebra y frena el crecimiento.</small>
+        <small style="color: #cbd5e1;">Priorizar gustos irrelevantes antes de asegurar los compromisos básicos genera inestabilidad, riesgo de quiebra y frena el crecimiento.</small>
       </div>
 
       <div class="branch-card branch-b">
         <div class="branch-title" style="color: #4ade80;">✅ Branch B: Cubrir Necesidades Básicas y Estabilidad</div>
-        <small>Asegurar primero lo esencial otorga la disciplina y liquidez requeridas para reinvertir con seguridad y hacer sostenible el proyecto.</small>
+        <small style="color: #cbd5e1;">Asegurar primero lo esencial otorga la disciplina y liquidez requeridas para reinvertir con seguridad y hacer sostenible el proyecto.</small>
       </div>
 
-      <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 15px;">
-        📱 Los alumnos pueden conectarse desde sus celulares escaneando el código QR para usar el pulsador.
+      <p style="font-size: 0.88rem; color: #94a3b8; margin-top: 15px;">
+        📱 Los alumnos pueden conectarse desde sus celulares escaneando el código QR para usar el pulsador en tiempo real.
       </p>
 
       <button class="btn-start-game" onclick="cerrarInstrucciones()">¡Entendido, Iniciar Juego!</button>
     </div>
   </div>
 
-  <!-- Cabecera con Logos -->
-  <header class="header-bar">
-    <img src="logo1.jpg" alt="Logo UACM" onerror="this.style.display='none'">
-    <h1 class="header-title">JEOPARDY: EDUCACIÓN FINANCIERA</h1>
-    <img src="logo2.jpg" alt="Logo CA" onerror="this.style.display='none'">
-  </header>
-
-  <!-- Estructura del Tablero requerida por host.js -->
-  <div class="main-container">
-    <div id="board" class="board"></div>
-  </div>
-
-  <!-- Modal de Pregunta -->
-  <div id="questionModal" class="modal hidden">
-    <div class="modal-content">
-      <h2 id="modalCategory">Categoría</h2>
-      <p id="modalQuestion">Texto de la Pregunta</p>
+  <div id="app">
+    <!-- Top Navigation Header con Logos -->
+    <header class="top-header">
+      <img src="logo1.jpg" alt="Logo UACM" class="header-logo-img" onerror="this.style.display='none'">
       
-      <div id="buzzerStatus" class="buzzer-box">
-        <span>Buzzer en Espera</span>
+      <div class="logo-area" style="text-align: center;">
+        <span class="game-badge">🎬 SET DE CINE: ESTUDIO A</span>
+        <h1 style="margin: 0; font-size: 1.6rem; color: #fff;">JEOPARDY: EDUCACIÓN FINANCIERA</h1>
       </div>
 
-      <div id="reflexionBox" class="reflexion-box hidden">
-        <h3>🤖 Reflexión IA (Educación Financiera):</h3>
-        <p id="reflexionText">Cargando reflexión...</p>
-        <button id="btnVoz" onclick="hablarReflexion()">🎙️ Leer en Voz Alta</button>
-      </div>
+      <img src="logo2.jpg" alt="Logo CA" class="header-logo-img" onerror="this.style.display='none'">
 
-      <div class="modal-actions">
-        <button onclick="activarBuzzer()">⚡ Activar Buzzer [Espacio]</button>
-        <button onclick="marcarCorrecto()">✅ ¡Correcto! [C]</button>
-        <button onclick="marcarIncorrecto()">❌ Incorrecto / Rebote [X]</button>
-        <button onclick="mostrarRespuesta()">👁️ Ver Respuesta [R]</button>
-        <button onclick="pedirReflexion(true)">🤖 Retroalimentación Éxito [I]</button>
-        <button onclick="pedirReflexion(false)">💡 Retroalimentación Corrección</button>
-        <button onclick="cerrarModal()">Volver al Tablero [Esc]</button>
+      <div class="header-actions">
+        <button id="btn-copy-zoom" class="btn btn-zoom" title="Copiar mensaje y enlace para Zoom">📋 Copiar Link</button>
+        <button id="btn-show-qr" class="btn btn-info" title="Mostrar Código QR">📱 Código QR</button>
+        <button id="btn-final-jeopardy" class="btn btn-final" title="Ir a Pregunta Final">🏆 Final Jeopardy</button>
+        <button id="btn-end-game" class="btn btn-podium" title="Ver Ganador">👑 Finalizar</button>
+        <button id="btn-sound-toggle" class="btn btn-icon">🔊</button>
+        <button id="btn-fullscreen" class="btn btn-icon">⛶</button>
+        <button id="btn-reset" class="btn btn-icon btn-danger" title="Reiniciar Tablero">🔄</button>
+      </div>
+    </header>
+
+    <!-- Subheader con estado de conexión -->
+    <div class="connection-bar">
+      <div class="conn-item">
+        <span class="conn-dot"></span>
+        <span id="conn-status-text">Conectando al servidor...</span>
+      </div>
+      <div class="conn-item">
+        <span>👥 Equipos registrados: <strong id="team-count">0</strong></span>
+      </div>
+      <div class="conn-item url-display">
+        <span>Link para Alumnos: <strong id="active-url-text">Cargando enlace...</strong></span>
+        <span id="tunnel-pass-box" class="tunnel-pass-box hidden">
+          🔑 Clave: <strong id="tunnel-pass-val"></strong>
+        </span>
+      </div>
+    </div>
+
+    <!-- Main Jeopardy Board Grid Requerido por host.js -->
+    <main class="board-container">
+      <div class="board-grid" id="board-grid">
+        <!-- Generado dinámicamente vía host.js -->
+      </div>
+    </main>
+
+    <!-- Marcador de Equipos en Vivo -->
+    <footer class="scoreboard-footer">
+      <div class="scoreboard-title">MARCADOR EN VIVO:</div>
+      <div class="teams-container" id="teams-container">
+        <div class="empty-teams-msg">Esperando a que los alumnos se unan desde sus móviles...</div>
+      </div>
+    </footer>
+
+    <!-- Question Modal Requerido por host.js -->
+    <div id="question-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span id="modal-category" class="badge-category">Categoría</span>
+          <span id="modal-points" class="badge-points">$100</span>
+        </div>
+
+        <div class="modal-body">
+          <p id="modal-question-text" class="question-text">Texto de la pregunta...</p>
+          
+          <div id="buzzer-status-banner" class="buzzer-banner state-idle">
+            <div class="buzzer-status-icon">⏸️</div>
+            <div class="buzzer-status-info">
+              <h3 id="buzzer-headline">Buzzer en Espera</h3>
+              <p id="buzzer-subtext">Lee la pregunta y presiona "Activar Buzzer".</p>
+            </div>
+            <div id="buzzer-reaction-time" class="reaction-badge hidden">0.00s</div>
+          </div>
+
+          <div id="teacher-guide-box" class="guide-box hidden">
+            <div class="guide-header"><strong>💡 Respuesta correcta:</strong></div>
+            <p id="modal-answer-text" class="answer-text"></p>
+            <div class="guide-footer">
+              <strong>📖 Guía docente:</strong> <span id="modal-guide-text"></span>
+            </div>
+          </div>
+
+          <!-- DeepSeek AI Reflection Box -->
+          <div id="ai-reflection-box" class="ai-reflection-box hidden">
+            <div class="ai-reflection-header">
+              <div class="ai-title">
+                <span class="ai-sparkle">🤖</span>
+                <strong>Reflexión DeepSeek (Educación Financiera):</strong>
+              </div>
+              <div class="ai-actions">
+                <button id="btn-speak-reflection" class="btn-ai-speak" onclick="hablarReflexion()" title="Leer en voz alta">
+                  🎙️ Leer en Voz Alta
+                </button>
+              </div>
+            </div>
+            <div id="ai-reflection-text" class="ai-reflection-text">
+              Cargando reflexión...
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-controls">
+          <button id="btn-activate-buzzer" class="btn btn-action btn-activate">⚡ Activar Buzzer <span class="hotkey">[Espacio]</span></button>
+          <button id="btn-correct" class="btn btn-action btn-correct" disabled>✅ ¡Correcto! <span class="hotkey">[C]</span></button>
+          <button id="btn-incorrect" class="btn btn-action btn-incorrect" disabled>❌ Incorrecto / Rebote <span class="hotkey">[X]</span></button>
+          <button id="btn-toggle-answer" class="btn btn-action btn-reveal">👁️ Ver Respuesta <span class="hotkey">[R]</span></button>
+          <button id="btn-trigger-ai" class="btn btn-action btn-ai" title="Reflexión IA">🤖 Reflexión IA <span class="hotkey">[I]</span></button>
+          <button id="btn-close-modal" class="btn btn-action btn-close">Volver al Tablero <span class="hotkey">[Esc]</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qr-modal" class="modal-overlay hidden">
+      <div class="modal-content qr-modal-box">
+        <h2>Únete con tu Celular</h2>
+        <div class="qr-image-wrapper">
+          <img id="qr-code-img" src="" alt="Código QR">
+        </div>
+        <div class="qr-url-box">
+          <input type="text" id="qr-url-input" readonly>
+          <button id="btn-copy-qr-url" class="btn btn-zoom">Copiar</button>
+        </div>
+        <button id="btn-close-qr-modal" class="btn btn-action btn-close" style="margin-top: 15px;">Cerrar</button>
       </div>
     </div>
   </div>
 
-  <script src="/socket.io/socket.io.js"></script>
   <script src="host.js"></script>
   <script>
     function cerrarInstrucciones() {
       document.getElementById('modalInstructions').style.display = 'none';
     }
 
-    // Configuración de Voz en Español Latinoamericano / México
+    // Voz Latinoamericana (México / LATAM)
     function obtenerVozLatinoamericana() {
       const voices = window.speechSynthesis.getVoices();
       return voices.find(v => v.lang === 'es-MX') ||
@@ -175,15 +260,15 @@
     }
 
     function hablarReflexion() {
-      const texto = document.getElementById('reflexionText').innerText;
+      const el = document.getElementById('ai-reflection-text') || document.getElementById('reflexionText');
+      if (!el) return;
+      const texto = el.innerText;
       if (!texto) return;
 
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(texto);
-      
       const voz = obtenerVozLatinoamericana();
       if (voz) utterance.voice = voz;
-
       utterance.rate = 0.95;
       utterance.pitch = 1.0;
       window.speechSynthesis.speak(utterance);
