@@ -8,77 +8,40 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
   <script src="/socket.io/socket.io.js"></script>
   <style>
-    /* Modal de Instrucciones Inicial */
+    /* Estilos del Modal de Instrucciones */
     .modal-instructions {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.88);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex; justify-content: center; align-items: center;
       z-index: 2000;
     }
     .modal-content-inst {
-      background: #1e293b;
-      color: #f8fafc;
-      padding: 28px;
-      border-radius: 14px;
-      max-width: 650px;
-      width: 90%;
+      background: #1e293b; color: #f8fafc; padding: 28px;
+      border-radius: 14px; max-width: 650px; width: 90%;
       box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-      border: 1px solid #3b82f6;
-      font-family: 'Montserrat', sans-serif;
+      border: 1px solid #3b82f6; font-family: 'Montserrat', sans-serif;
     }
     .modal-content-inst h2 {
-      color: #60a5fa;
-      margin-top: 0;
-      font-size: 1.6rem;
-      border-bottom: 1px solid #334155;
-      padding-bottom: 10px;
+      color: #60a5fa; margin-top: 0; font-size: 1.6rem;
+      border-bottom: 1px solid #334155; padding-bottom: 10px;
     }
     .branch-card {
-      background: #0f172a;
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin: 12px 0;
-      border-left: 4px solid #ef4444;
-      text-align: left;
+      background: #0f172a; padding: 12px 16px; border-radius: 8px;
+      margin: 12px 0; border-left: 4px solid #ef4444; text-align: left;
     }
-    .branch-card.branch-b {
-      border-left-color: #22c55e;
-    }
-    .branch-title {
-      font-weight: bold;
-      font-size: 1rem;
-      margin-bottom: 4px;
-    }
+    .branch-card.branch-b { border-left-color: #22c55e; }
+    .branch-title { font-weight: bold; font-size: 1rem; margin-bottom: 4px; }
     .btn-start-game {
-      background: #22c55e;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 15px;
-      transition: background 0.2s;
+      background: #22c55e; color: white; border: none; padding: 12px 24px;
+      font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer;
+      width: 100%; margin-top: 15px; transition: background 0.2s;
     }
-    .btn-start-game:hover {
-      background: #16a34a;
-    }
-    .header-logo-custom {
-      max-height: 50px;
-      object-fit: contain;
-      border-radius: 4px;
-    }
+    .btn-start-game:hover { background: #16a34a; }
+    .header-logo-custom { max-height: 50px; object-fit: contain; border-radius: 4px; }
   </style>
 </head>
-<body>
+<body class="cinema-theme">
 
   <!-- Modal de Instrucciones Inicial -->
   <div id="modalInstructions" class="modal-instructions">
@@ -117,13 +80,13 @@
       <img src="logo2.jpg" alt="Logo 2" class="header-logo-custom" onerror="this.style.display='none'">
 
       <div class="header-actions">
-        <button id="btn-copy-zoom" class="btn btn-zoom" title="Copiar mensaje y enlace para el chat de Zoom">📋 Copiar Link de Zoom</button>
+        <button id="btn-copy-zoom" class="btn btn-zoom" title="Copiar mensaje y enlace para Zoom">📋 Copiar Link de Zoom</button>
         <button id="btn-show-qr" class="btn btn-info" title="Mostrar Código QR en grande">📱 Código QR</button>
         <button id="btn-final-jeopardy" class="btn btn-final" title="Ir a la Pregunta Final">🏆 Final Jeopardy</button>
         <button id="btn-end-game" class="btn btn-podium" title="Finalizar partida">👑 Finalizar y Ver Ganador</button>
-        <button id="btn-sound-toggle" class="btn btn-icon" title="Silenciar / Activar sonido">🔊</button>
-        <button id="btn-fullscreen" class="btn btn-icon" title="Pantalla Completa">⛶</button>
-        <button id="btn-reset" class="btn btn-icon btn-danger" title="Reiniciar Tablero">🔄</button>
+        <button id="btn-sound-toggle" class="btn btn-icon">🔊</button>
+        <button id="btn-fullscreen" class="btn btn-icon">⛶</button>
+        <button id="btn-reset" class="btn btn-icon btn-danger">🔄</button>
       </div>
     </header>
 
@@ -142,10 +105,10 @@
       </div>
     </div>
 
-    <!-- Main Jeopardy Board -->
+    <!-- Main Jeopardy Board Grid -->
     <main class="board-container">
       <div class="board-grid" id="board-grid">
-        <!-- Generated dynamically via host.js -->
+        <!-- Renderizado dinámico -->
       </div>
     </main>
 
@@ -157,33 +120,29 @@
       </div>
     </footer>
 
-    <!-- Question Modal -->
+    <!-- Modales requeridos por el script -->
     <div id="question-modal" class="modal-overlay hidden">
       <div class="modal-content">
         <div class="modal-header">
           <span id="modal-category" class="badge-category">Categoría</span>
           <span id="modal-points" class="badge-points">$100</span>
         </div>
-
         <div class="modal-body">
           <p id="modal-question-text" class="question-text">Texto de la pregunta...</p>
-
           <div class="options-grid">
             <div id="opt-card-A" class="option-card"><span id="opt-text-A"></span></div>
             <div id="opt-card-B" class="option-card"><span id="opt-text-B"></span></div>
             <div id="opt-card-C" class="option-card"><span id="opt-text-C"></span></div>
             <div id="opt-card-D" class="option-card"><span id="opt-text-D"></span></div>
           </div>
-          
           <div id="buzzer-status-banner" class="buzzer-banner state-idle">
             <div class="buzzer-status-icon">⏸️</div>
             <div class="buzzer-status-info">
               <h3 id="buzzer-headline">Buzzer en Espera</h3>
-              <p id="buzzer-subtext">Lee la pregunta por Zoom y presiona "Activar Buzzer".</p>
+              <p id="buzzer-subtext">Lee la pregunta y presiona "Activar Buzzer".</p>
             </div>
             <div id="buzzer-reaction-time" class="reaction-badge hidden">0.00s</div>
           </div>
-
           <div id="teacher-guide-box" class="guide-box hidden">
             <div class="guide-header"><strong>💡 Respuesta correcta:</strong></div>
             <p id="modal-answer-text" class="answer-text"></p>
@@ -191,58 +150,45 @@
               <strong>📖 Guía docente:</strong> <span id="modal-guide-text"></span>
             </div>
           </div>
-
-          <!-- DeepSeek AI Reflection Box -->
           <div id="ai-reflection-box" class="ai-reflection-box hidden">
             <div class="ai-reflection-header">
               <div class="ai-title">
                 <span class="ai-sparkle">🤖</span>
-                <strong>Reflexión DeepSeek (Educación Financiera):</strong>
+                <strong>Reflexión DeepSeek:</strong>
               </div>
               <div class="ai-actions">
-                <button id="btn-speak-reflection" class="btn-ai-speak" onclick="hablarReflexion()" title="Leer en voz alta">🎙️ Leer en Voz Alta</button>
+                <button id="btn-speak-reflection" class="btn-ai-speak" onclick="hablarReflexion()">🎙️ Leer en Voz Alta</button>
               </div>
             </div>
-            <div id="ai-reflection-text" class="ai-reflection-text">Haz clic en "Reflexión IA" para obtener un análisis pedagógico.</div>
+            <div id="ai-reflection-text" class="ai-reflection-text">Reflexión...</div>
           </div>
         </div>
-
         <div class="modal-controls">
-          <button id="btn-activate-buzzer" class="btn btn-action btn-activate">⚡ Activar Buzzer <span class="hotkey">[Espacio]</span></button>
-          <button id="btn-correct" class="btn btn-action btn-correct" disabled>✅ ¡Correcto! <span class="hotkey">[C]</span></button>
-          <button id="btn-incorrect" class="btn btn-action btn-incorrect" disabled>❌ Incorrecto / Rebote <span class="hotkey">[X]</span></button>
-          <button id="btn-toggle-answer" class="btn btn-action btn-reveal">👁️ Ver Respuesta <span class="hotkey">[R]</span></button>
-          <button id="btn-trigger-ai" class="btn btn-action btn-ai" title="Reflexión IA">🤖 Reflexión IA <span class="hotkey">[I]</span></button>
-          <button id="btn-close-modal" class="btn btn-action btn-close">Volver al Tablero <span class="hotkey">[Esc]</span></button>
+          <button id="btn-activate-buzzer" class="btn btn-action btn-activate">⚡ Activar Buzzer</button>
+          <button id="btn-correct" class="btn btn-action btn-correct" disabled>✅ ¡Correcto!</button>
+          <button id="btn-incorrect" class="btn btn-action btn-incorrect" disabled>❌ Incorrecto</button>
+          <button id="btn-toggle-answer" class="btn btn-action btn-reveal">👁️ Ver Respuesta</button>
+          <button id="btn-trigger-ai" class="btn btn-action btn-ai">🤖 Reflexión IA</button>
+          <button id="btn-close-modal" class="btn btn-action btn-close">Volver al Tablero</button>
         </div>
       </div>
     </div>
 
-    <!-- QR Code Modal -->
     <div id="qr-modal" class="modal-overlay hidden">
       <div class="modal-content qr-modal-box">
-        <h2>Únete con tu Celular o Pestaña</h2>
-        <div class="qr-image-wrapper">
-          <img id="qr-code-img" src="" alt="Código QR">
-        </div>
-        <div class="qr-url-box">
-          <input type="text" id="qr-url-input" readonly>
-          <button id="btn-copy-qr-url" class="btn btn-zoom">Copiar</button>
-        </div>
+        <h2>Únete con tu Celular</h2>
+        <div class="qr-image-wrapper"><img id="qr-code-img" src="" alt="QR"></div>
+        <div class="qr-url-box"><input type="text" id="qr-url-input" readonly><button id="btn-copy-qr-url" class="btn btn-zoom">Copiar</button></div>
         <button id="btn-close-qr" class="btn btn-action btn-close" style="margin-top: 15px;">Cerrar</button>
       </div>
     </div>
 
-    <!-- Final Jeopardy Modal -->
     <div id="final-modal" class="modal-overlay hidden">
       <div class="modal-content">
         <h2>🏆 FINAL JEOPARDY</h2>
         <p id="final-question-text"></p>
         <div id="final-options-grid" class="options-grid"></div>
-        <div id="final-guide-box" class="guide-box hidden">
-          <p id="final-answer-text"></p>
-          <span id="final-guide-text"></span>
-        </div>
+        <div id="final-guide-box" class="guide-box hidden"><p id="final-answer-text"></p><span id="final-guide-text"></span></div>
         <div class="modal-controls">
           <button id="btn-final-activate" class="btn btn-action btn-activate">⚡ Activar Buzzer</button>
           <button id="btn-final-reveal" class="btn btn-action btn-reveal">👁️ Ver Respuesta</button>
@@ -251,7 +197,6 @@
       </div>
     </div>
 
-    <!-- Podium Modal -->
     <div id="podium-modal" class="modal-overlay hidden">
       <div class="modal-content">
         <h2>👑 GANADORES DE LA TRIVIA</h2>
@@ -266,7 +211,53 @@
   <script>
     function cerrarInstrucciones() {
       document.getElementById('modalInstructions').style.display = 'none';
+      fuerzaRendimientoAPI();
     }
+
+    async function fuerzaRendimientoAPI() {
+      const grid = document.getElementById('board-grid');
+      if (!grid || grid.children.length > 0) return;
+
+      try {
+        const res = await fetch('/api/questions');
+        const data = await res.json();
+
+        grid.innerHTML = '';
+        data.categorias.forEach((cat, catIndex) => {
+          const col = document.createElement('div');
+          col.className = 'board-column';
+
+          const catCard = document.createElement('div');
+          catCard.className = 'category-card';
+          catCard.innerHTML = `
+            <span class="category-icon">${cat.icono || '🎬'}</span>
+            <span class="category-title">${cat.nombre}</span>
+          `;
+          col.appendChild(catCard);
+
+          cat.preguntas.forEach((q, qIndex) => {
+            const pointCard = document.createElement('div');
+            pointCard.className = 'point-card';
+            pointCard.innerHTML = `<span class="point-value">$${q.puntos}</span>`;
+            pointCard.onclick = () => {
+              if (typeof socket !== 'undefined') {
+                socket.emit('open-question', { catIndex, qIndex });
+              }
+            };
+            col.appendChild(pointCard);
+          });
+
+          grid.appendChild(col);
+        });
+      } catch (err) {
+        console.error("Error al cargar via API:", err);
+      }
+    }
+
+    // Auto-ejecución a los 500ms
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(fuerzaRendimientoAPI, 500);
+    });
 
     function obtenerVozLatinoamericana() {
       const voices = window.speechSynthesis.getVoices();
@@ -280,13 +271,11 @@
     function hablarReflexion() {
       const el = document.getElementById('ai-reflection-text');
       if (!el || !el.innerText) return;
-
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(el.innerText);
       const voz = obtenerVozLatinoamericana();
       if (voz) utterance.voice = voz;
-      utterance.rate = 0.95;
-      utterance.pitch = 1.0;
+      utterance.rate = 0.95; utterance.pitch = 1.0;
       window.speechSynthesis.speak(utterance);
     }
 
