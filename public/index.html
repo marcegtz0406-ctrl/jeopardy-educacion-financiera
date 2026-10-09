@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
   <script src="/socket.io/socket.io.js"></script>
   <style>
-    /* Estilos del Modal de Instrucciones */
+    /* Modal de Instrucciones Inicial */
     .modal-instructions {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -41,7 +41,7 @@
     .header-logo-custom { max-height: 50px; object-fit: contain; border-radius: 4px; }
   </style>
 </head>
-<body class="cinema-theme">
+<body>
 
   <!-- Modal de Instrucciones Inicial -->
   <div id="modalInstructions" class="modal-instructions">
@@ -108,7 +108,7 @@
     <!-- Main Jeopardy Board Grid -->
     <main class="board-container">
       <div class="board-grid" id="board-grid">
-        <!-- Renderizado dinámico -->
+        <!-- Generado dinámicamente -->
       </div>
     </main>
 
@@ -224,21 +224,21 @@
 
         grid.innerHTML = '';
         data.categorias.forEach((cat, catIndex) => {
+          // Usamos la clase de CSS exacta: category-column
           const col = document.createElement('div');
-          col.className = 'board-column';
+          col.className = 'category-column';
 
+          // Usamos la clase de CSS exacta: category-header con un <h2>
           const catCard = document.createElement('div');
-          catCard.className = 'category-card';
-          catCard.innerHTML = `
-            <span class="category-icon">${cat.icono || '🎬'}</span>
-            <span class="category-title">${cat.nombre}</span>
-          `;
+          catCard.className = 'category-header';
+          catCard.innerHTML = `<h2>${cat.icono || '🎬'} ${cat.nombre}</h2>`;
           col.appendChild(catCard);
 
           cat.preguntas.forEach((q, qIndex) => {
+            // Usamos las clases de CSS exactas: question-card y points
             const pointCard = document.createElement('div');
-            pointCard.className = 'point-card';
-            pointCard.innerHTML = `<span class="point-value">$${q.puntos}</span>`;
+            pointCard.className = 'question-card';
+            pointCard.innerHTML = `<span class="points">$${q.puntos}</span>`;
             pointCard.onclick = () => {
               if (typeof socket !== 'undefined') {
                 socket.emit('open-question', { catIndex, qIndex });
@@ -254,9 +254,8 @@
       }
     }
 
-    // Auto-ejecución a los 500ms
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(fuerzaRendimientoAPI, 500);
+      setTimeout(fuerzaRendimientoAPI, 400);
     });
 
     function obtenerVozLatinoamericana() {
