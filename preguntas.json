@@ -1,0 +1,196 @@
+{
+  "titulo": "Jeopardy: El Set de Cine - Estudio A (Finanzas)",
+  "descripcion": "Dinámica interactiva: 'La película de tu vida' (Gestión de Presupuesto: Necesidades vs. Deseos / Branch A vs. Branch B)",
+  "categorias": [
+    {
+      "nombre": "Necesidades vs. Deseos en el Set",
+      "descripcion": "Conceptos clave sobre distinciones presupuestarias, costos de oportunidad y clasificación de gastos",
+      "preguntas": [
+        {
+          "puntos": 100,
+          "pregunta": "¿Cuál es la diferencia fundamental entre una 'necesidad operativa' y un 'deseo' en el presupuesto de una producción como el Estudio A?",
+          "respuesta": "Una necesidad es indispensable para que el proyecto o rodaje funcione y sobreviva operativamente (ej. luz, renta del estudio, salarios mínimos), mientras que un deseo es opcional, secundario y responde a un gusto, lujo o impulso estético.",
+          "guia_docente": "Hacer énfasis en que en finanzas personales y profesionales, las necesidades garantizan la supervivencia, mientras que los deseos son prescindibles si no hay holgura financiera."
+        },
+        {
+          "puntos": 200,
+          "pregunta": "En el rodaje de 'La película de tu vida', ¿por qué contratar un catering gourmet exclusivo y un camper de lujo entran en la categoría de 'deseos irrelevantes'?",
+          "respuesta": "Porque no aportan a la viabilidad técnica ni a la calidad operativa indispensable de la filmación, consumiendo capital crítico de forma superficial antes de asegurar lo básico.",
+          "guia_docente": "Pedir a los alumnos que identifiquen gastos equivalentes en la vida cotidiana (ej. comprar café premium diario vs. pagar el arriendo o comida)."
+        },
+        {
+          "puntos": 300,
+          "pregunta": "En una lista de producción con 4 ítems: 1) Permisos de filmación, 2) Luces principales, 3) Vestuario de diseñador importado, y 4) Salario del camarógrafo. ¿Cuáles son necesidades y cuál es el deseo a posponer?",
+          "respuesta": "Necesidades: Permisos de locación, luces principales y salario del camarógrafo. Deseo a posponer: El vestuario de diseñador importado (puede sustituirse por vestuario accesible sin frenar la película).",
+          "guia_docente": "Analizar la capacidad de sustitución y priorización en escenarios de presupuesto limitado."
+        },
+        {
+          "puntos": 400,
+          "pregunta": "¿Qué es el 'Costo de Oportunidad' y cómo se manifiesta cuando el director decide gastar $3,000 MXN en el camper de lujo?",
+          "respuesta": "Es el valor o beneficio de la mejor alternativa que se sacrifica al tomar una decisión financiera. Al comprar el camper, se pierde la oportunidad de pagar la luz del set o constituir un fondo de reserva para imprevistos.",
+          "guia_docente": "Concepto económico medular: cada peso gastado en un capricho es un peso menos de seguridad operativa."
+        },
+        {
+          "puntos": 500,
+          "pregunta": "¿Cómo puede un productor o persona detectar cuándo un deseo se está disfrazando de 'falsa necesidad' antes de autorizar un gasto?",
+          "respuesta": "Aplicando el test de operatividad crítica: preguntarse '¿Si no realizo este gasto hoy, la producción se detiene por completo o solo disminuye una comodidad/estatus?'. Si el proyecto puede continuar sin él, es un deseo.",
+          "guia_docente": "Herramienta de metacognición financiera para evitar el autoengaño impulsivo en decisiones de compra."
+        }
+      ]
+    },
+    {
+      "nombre": "Branch A: La Trampa de los Lujos",
+      "descripcion": "Decisión impulsiva, gasto en deseos superfluos, plot twist y consecuencias de la insolvencia",
+      "preguntas": [
+        {
+          "puntos": 100,
+          "pregunta": "¿Cuál es la decisión inicial errónea que toma el jugador al elegir el [Branch A] en el Estudio A?",
+          "respuesta": "Decide invertir la mayor parte del presupuesto de $10,000 MXN en lujos innecesarios para el rodaje (camper de lujo, catering gourmet y equipo estético ostentoso).",
+          "guia_docente": "Revisar la premisa de la Escena 2 del Estudio A: gastar primero en lo cosmético antes de lo funcional."
+        },
+        {
+          "puntos": 200,
+          "pregunta": "¿Cuál es el 'Giro de Trama' (Plot Twist) y la Tarjeta de Consecuencia que recibe el jugador en el Branch A?",
+          "respuesta": "Revela la tarjeta: '¡Te quedaste sin dinero para necesidades básicas!', provocando que ya no haya fondos para pagar la renta del estudio, la luz del set ni los salarios mínimos del equipo técnico.",
+          "guia_docente": "Discutir el impacto súbito de la iliquidez: las cuentas fijas no esperan a los caprichos del director."
+        },
+        {
+          "puntos": 300,
+          "pregunta": "Si un productor asigna el 80% ($8,000 MXN) a deseos en su primera semana y surge un imprevisto obligatorio de energía de $2,500 MXN, ¿cuál es su balance financiero?",
+          "respuesta": "Cae en un déficit de -$500 MXN (quiebra técnica e insolvencia), ya que solo le restaban $2,000 MXN de liquidez para operar.",
+          "guia_docente": "Demostrar cuantitativamente por qué sobrepasar el margen de seguridad deja a cualquier entidad indefensa ante imprevistos."
+        },
+        {
+          "puntos": 400,
+          "pregunta": "¿Qué efecto dominó provoca en el equipo humano de producción la crisis financiera generada en el Branch A?",
+          "respuesta": "Pérdida de confianza, desmotivación, paros o renuncia del personal técnico esencial por falta de pago de salarios, paralizando definitivamente el rodaje.",
+          "guia_docente": "Enfatizar que la mala gestión financiera destruye el clima organizacional y el talento humano de cualquier empresa o proyecto."
+        },
+        {
+          "puntos": 500,
+          "pregunta": "¿Qué sesgo de las finanzas conductuales explica por qué el director del Branch A cayó en la trampa de los lujos antes de consolidar el rodaje?",
+          "respuesta": "El sesgo de gratificación instantánea y consumo por estatus (deseo de aparentar éxito y opulencia inmediata frente a terceros antes de haber creado valor real y sustentable).",
+          "guia_docente": "Vincular con la presión de redes sociales y el consumo aspiracional no planificado en la vida real."
+        }
+      ]
+    },
+    {
+      "nombre": "Branch B: Estrategia y Estabilidad",
+      "descripcion": "Priorización operativa, sostenibilidad, plot twist favorable y reinversión inteligente",
+      "preguntas": [
+        {
+          "puntos": 100,
+          "pregunta": "¿Cuáles son los 4 gastos operativos indispensables que prioriza el jugador que elige el [Branch B]?",
+          "respuesta": "Alquiler de equipo principal, permisos de locación, salarios base del equipo técnico y fondo de seguridad/reserva financiera.",
+          "guia_docente": "Repasar los 4 pilares esenciales descritos en el documento para garantizar la operación del Estudio A."
+        },
+        {
+          "puntos": 200,
+          "pregunta": "¿Cuál es el 'Giro de Trama' (Plot Twist) favorable que se desbloquea en el Branch B tras el primer mes?",
+          "respuesta": "Revela la tarjeta: '¡Producción Estable!', asegurando la supervivencia del proyecto en su etapa más crítica y abriendo el camino para reinvertir ganancias futuras con inteligencia.",
+          "guia_docente": "El orden presupuestal genera resiliencia y prepara el terreno para el crecimiento financiero."
+        },
+        {
+          "puntos": 300,
+          "pregunta": "En el Branch B, tras cubrir $7,000 MXN en necesidades operativas básicas, restan $3,000 MXN. ¿Cuál es el destino más estratégico para este remanente?",
+          "respuesta": "Destinar una parte a fondo de contingencia/emergencias para el set y otra a pequeñas mejoras operativas o reserva para postproducción.",
+          "guia_docente": "Explicar que el sobrante no debe quemarse de inmediato en lujos, sino blindar el proyecto ante contingencias."
+        },
+        {
+          "puntos": 400,
+          "pregunta": "¿Por qué la estrategia del Branch B incrementa sustancialmente el Retorno de Inversión (ROI) y la rentabilidad del proyecto cinematográfico?",
+          "respuesta": "Porque garantiza que la película se termine y estrene a tiempo sin acumular deudas asfixiantes ni sobrecostos por penalizaciones de impago, maximizando el margen de ganancia neta.",
+          "guia_docente": "Conectar la eficiencia de costos con la rentabilidad final de cualquier iniciativa empresarial o personal."
+        },
+        {
+          "puntos": 500,
+          "pregunta": "Un inversor sostiene que el Branch B es 'demasiado austero y limita la creatividad'. ¿Cómo se refuta pedagógica y financieramente esta postura?",
+          "respuesta": "La estabilidad financiera es el verdadero protector de la libertad creativa, ya que evita que el proyecto sea embargado o cancelado; sin una base operativa sólida, no existe arte que pueda exhibirse.",
+          "guia_docente": "Pregunta de juicio crítico: la gestión financiera no es un freno a la creatividad, sino su plataforma de despegue."
+        }
+      ]
+    },
+    {
+      "nombre": "Presupuesto y Flujo de Caja ($10,000)",
+      "descripcion": "Herramientas cuantitativas, liquidez, fondos de contingencia y reglas de asignación",
+      "preguntas": [
+        {
+          "puntos": 100,
+          "pregunta": "¿Qué es un 'Presupuesto Financiero de Producción' y cuál es su principal objetivo en el Estudio A?",
+          "respuesta": "Es una herramienta de planificación cuantitativa que permite anticipar ingresos, delimitar techos de gasto por categoría y prevenir crisis de iliquidez de forma organizada.",
+          "guia_docente": "Visto en las preguntas complementarias del Estudio A: planificar antes de gastar."
+        },
+        {
+          "puntos": 200,
+          "pregunta": "¿Cuál es la diferencia crítica entre 'Estar en Presupuesto' y 'Tener Flujo de Caja (Liquidez Inmediata)'?",
+          "respuesta": "El presupuesto es el plan teórico de ingresos y egresos; el flujo de caja es el dinero real y disponible en el banco/caja en el momento exacto en que vencen las facturas y pagos urgentes.",
+          "guia_docente": "Muchas empresas fracasan teniendo balances positivos en papel pero sin efectivo para pagar la nómina del viernes."
+        },
+        {
+          "puntos": 300,
+          "pregunta": "Si aplicamos la regla financiera 50/30/20 al presupuesto de $10,000 MXN del rodaje: ¿Cuánto dinero exacto se asignaría a Necesidades, Deseos y Fondo de Reserva?",
+          "respuesta": "Necesidades operativas (50%): $5,000 MXN. Deseos/Mejoras (30%): $3,000 MXN. Fondo de reserva/Ahorro (20%): $2,000 MXN.",
+          "guia_docente": "Ejercicio de cálculo práctico para fijar la estructura de distribución porcentual."
+        },
+        {
+          "puntos": 400,
+          "pregunta": "En plena filmación ocurre un imprevisto técnico inevitable de $1,800 MXN. ¿Qué ocurre con la producción del Branch A vs. la producción del Branch B?",
+          "respuesta": "El Branch A se paraliza o quiebra por carecer de liquidez (se gastó todo en lujos); el Branch B absorbe el imprevisto con su fondo de reserva y continúa rodando sin retrasos.",
+          "guia_docente": "Demostración tangible del valor de la gestión de riesgos en la producción real."
+        },
+        {
+          "puntos": 500,
+          "pregunta": "¿Qué síntoma financiero inequívoco advierte que una producción (o persona) está entrando en insolvencia antes de la quiebra total?",
+          "respuesta": "Tener que recurrir a deuda de corto plazo o créditos caros para pagar gastos corrientes fijos (como nóminas, renta o luz) debido a la falta de liquidez operativa.",
+          "guia_docente": "Nivel de síntesis: endeudarse para pagar gastos básicos es la señal de alarma definitiva."
+        }
+      ]
+    },
+    {
+      "nombre": "De la Película a tu Vida Real",
+      "descripcion": "Transferencia de aprendizajes, finanzas personales, hábitos de consumo y toma de decisiones",
+      "preguntas": [
+        {
+          "puntos": 100,
+          "pregunta": "En la analogía de 'La película de tu vida', ¿a qué equivalen en la vida cotidiana de un joven la 'renta del estudio y la luz del set'?",
+          "respuesta": "A los gastos fijos indispensables para vivir: vivienda/arriendo, servicios básicos (agua, luz, internet para estudiar/trabajar), alimentación y transporte.",
+          "guia_docente": "Ayudar a los estudiantes a mapear los conceptos del juego a su realidad personal diaria."
+        },
+        {
+          "puntos": 200,
+          "pregunta": "¿A qué equivale en la vida real el 'catering gourmet exclusivo y camper del director' del Branch A?",
+          "respuesta": "A los gastos hormiga diarios, salidas nocturnas caras no presupuestadas, compra de ropa de diseñador por impulso o suscripciones que no se utilizan.",
+          "guia_docente": "Identificar fugas de capital comunes en la juventud y en profesionales noveles."
+        },
+        {
+          "puntos": 300,
+          "pregunta": "Si un joven con ingresos de $10,000 MXN adquiere un celular de gama alta a 24 meses comprometiendo el 50% de su sueldo mensual, ¿qué Branch está replicando y por qué?",
+          "respuesta": "Está replicando el [Branch A], porque hipoteca su liquidez futura en un deseo de consumo estético, quedándose sin margen para responder a emergencias o necesidades básicas.",
+          "guia_docente": "Analizar cómo el crédito mal utilizado hipoteca la libertad de decisión futura."
+        },
+        {
+          "puntos": 400,
+          "pregunta": "¿Por qué postergar la gratificación (Branch B) genera libertad financiera a largo plazo, mientras que el impulso inmediato (Branch A) genera estrés y deudas?",
+          "respuesta": "Postergar la gratificación permite acumular liquidez, invertir y generar rendimientos a favor; el impulso inmediato atrapa al individuo en el ciclo de trabajar únicamente para pagar intereses de deudas pasadas.",
+          "guia_docente": "Explicar el contraste entre interés compuesto a favor del ahorrador vs. en contra del deudor."
+        },
+        {
+          "puntos": 500,
+          "pregunta": "Diseña una 'Regla de Oro de 3 Pasos' que cualquier persona debe aplicar antes de realizar un gasto no esencial que supere el 10% de sus ingresos.",
+          "respuesta": "1) Pausa reflexiva de 48 horas (evitar impulso emocional), 2) Verificación de liquidez (¿Tengo el dinero completo sin tocar el fondo de emergencia?), y 3) Costo de oportunidad (¿Qué meta importante estoy sacrificando por esta compra?).",
+          "guia_docente": "Protocolo de autorregulación financiera transferible para toda la vida de los alumnos."
+        }
+      ]
+    }
+  ],
+  "final_jeopardy": {
+    "categoria": "La Clapperboard Final: Estrategia y Libertad Financiera",
+    "pregunta": "Tras finalizar exitosamente el rodaje en el Branch B con los $10,000 MXN bien administrados, la película se estrena y genera sus primeros $20,000 MXN de ganancia líquida. El socio productor propone gastar el 100% de inmediato en una fiesta de gala para 'aparentar éxito y conseguir nuevos inversionistas'. En cambio, el director financiero propone reinvertir el 60% en la siguiente producción, guardar un 20% en fondo de contingencia y destinar el 20% a un bono de celebración del equipo. ¿Cuál decisión garantiza la viabilidad del estudio a largo plazo, qué riesgo mitiga y qué principio de finanzas respalda tu elección?",
+    "respuesta_esperada": "La propuesta del director financiero es la correcta: asegura la viabilidad a largo plazo mediante la reinversión de capital (crecimiento continuo del estudio), mitiga el riesgo de iliquidez futura (fondo del 20%) y recompensa al equipo de forma balanceada (20%), evitando el error catastrófico del Branch A de descapitalizarse por apariencias efímeras.",
+    "criterios_evaluacion": [
+      "Identificación clara de la trampa de descapitalización por gastos suntuarios y ostentación",
+      "Aplicación del principio de reinversión de utilidades para el crecimiento del patrimonio o proyecto",
+      "Equilibrio entre prudencia financiera (fondo de reserva) y motivación del equipo (bono controlado)"
+    ]
+  }
+}

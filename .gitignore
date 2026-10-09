@@ -1,0 +1,17 @@
+# Dependencias de Node
+node_modules/
+package-lock.json
+
+# Archivos de entorno y claves secretas
+.env
+.env.local
+.env.*.local
+
+# Archivos de depuración y logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
