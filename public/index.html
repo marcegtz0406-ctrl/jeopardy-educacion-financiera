@@ -208,7 +208,7 @@
   </div>
 <script src="host.js"></script>
   <script>
-    // 1. Ocultar instrucciones iniciales
+    // 1. Ocultar instrucciones
     function cerrarInstrucciones() {
       const modal = document.getElementById('modalInstructions');
       if (modal) modal.style.display = 'none';
@@ -217,7 +217,7 @@
 
     let preguntasLocales = null;
 
-    // 2. Cargar datos reales de preguntas.json
+    // 2. Cargar y renderizar el tablero
     async function fuerzaRendimientoAPI() {
       const grid = document.getElementById('board-grid');
       if (!grid) return;
@@ -226,19 +226,15 @@
       try {
         let res = await fetch('/preguntas.json');
         if (!res.ok) res = await fetch('/api/questions');
-        if (res.ok) {
-          preguntasLocales = await res.json();
-        }
+        if (res.ok) preguntasLocales = await res.json();
       } catch (e) {
-        console.warn("No se pudo cargar preguntas.json vía fetch:", e);
+        console.warn("No se pudo obtener preguntas.json:", e);
       }
 
-      // Si tenemos preguntas cargadas vía Socket.IO en host.js, usar esas
       if ((!preguntasLocales || !preguntasLocales.categorias) && typeof questionsData !== 'undefined' && questionsData) {
         preguntasLocales = questionsData;
       }
 
-      // Estructura de respaldo si fallara la lectura
       if (!preguntasLocales || !preguntasLocales.categorias) {
         preguntasLocales = {
           categorias: [
@@ -246,55 +242,55 @@
               nombre: "Necesidades vs. Deseos en el Set",
               icono: "🎬",
               preguntas: [
-                { puntos: 100, pregunta: "¿Qué distingue a una necesidad de un deseo en producción?", opciones: { A: "A) La necesidad es vital para el rodaje", B: "B) El deseo es indispensable" }, respuesta: "La necesidad es esencial para operar.", guia_docente: "Enfocarse en Branch B evita gastos innecesarios." },
-                { puntos: 200, pregunta: "¿Cuál es un ejemplo de gasto por impulso en el set?", opciones: { A: "A) Rentar cámaras extra no planeadas", B: "B) Comprar transporte de equipo" }, respuesta: "Rentar equipo no presupuestado.", guia_docente: "Branch A lleva a sobrecostos." },
-                { puntos: 300, pregunta: "¿Cómo afecta el flujo de caja priorizar deseos?", opciones: { A: "A) Agota la liquidez rápidamente", B: "B) Aumenta las ganancias" }, respuesta: "Agotamiento prematuro del capital.", guia_docente: "Revisar presupuesto regularmente." },
-                { puntos: 400, pregunta: "¿Qué estrategia evita la quiebra en rodaje?", opciones: { A: "A) Branch B: Cubrir necesidades básicas", B: "B) Gastar el fondo de reserva" }, respuesta: "Priorizar compromisos básicos.", guia_docente: "Branch B garantiza la continuidad." },
-                { puntos: 500, pregunta: "¿Qué es el costo de oportunidad en cine?", opciones: { A: "A) Lo que renuncias al gastar en lujos", B: "B) El costo total de la película" }, respuesta: "El beneficio sacrificado por mala elección.", guia_docente: "Evaluar cada inversión." }
+                { puntos: 100, pregunta: "¿Qué distingue a una necesidad de un deseo en producción?", opciones: { A: "Opción A: Invertir en necesidades operativas básicas.", B: "Opción B: Gastar en lujos y deseos superfluos." }, respuesta: "Las necesidades garantizan la operación básica, mientras que los deseos son opcionales.", guia_docente: "Enfocarse en Branch B evita gastos innecesarios." },
+                { puntos: 200, pregunta: "¿Cuál es un ejemplo de gasto por impulso en el set?", opciones: { A: "Opción A: Rentar equipo no presupuestado.", B: "Opción B: Contratar el transporte esencial." }, respuesta: "Rentar equipo no presupuestado.", guia_docente: "Branch A lleva a sobrecostos." },
+                { puntos: 300, pregunta: "¿Cómo afecta el flujo de caja priorizar deseos?", opciones: { A: "Opción A: Agota la liquidez rápidamente.", B: "Opción B: Aumenta las ganancias del proyecto." }, respuesta: "Agotamiento prematuro del capital.", guia_docente: "Revisar el presupuesto regularmente." },
+                { puntos: 400, pregunta: "¿Qué estrategia evita la quiebra en rodaje?", opciones: { A: "Opción A: Branch B: Cubrir necesidades básicas.", B: "Opción B: Gastar el fondo de reserva." }, respuesta: "Priorizar compromisos básicos.", guia_docente: "Branch B garantiza la continuidad." },
+                { puntos: 500, pregunta: "¿Qué es el costo de oportunidad en cine?", opciones: { A: "Opción A: El beneficio sacrificado por mala elección.", B: "Opción B: El costo total de la película." }, respuesta: "El beneficio sacrificado por una mala elección.", guia_docente: "Evaluar cada inversión con rigor." }
               ]
             },
             {
               nombre: "Branch A: La Trampa de los Lujos",
               icono: "⚠️",
               preguntas: [
-                { puntos: 100, pregunta: "¿Qué caracteriza a las decisiones de Branch A?", opciones: { A: "A) Gastar en lujos e impulsos", B: "B) Ahorrar e invertir en equipo" }, respuesta: "Incurrir en gastos superfluos.", guia_docente: "Analizar el riesgo de Branch A." },
-                { puntos: 200, pregunta: "¿Qué consecuencia inmediata genera Branch A?", opciones: { A: "A) Inestabilidad financiera", B: "B) Mayor liquidez" }, respuesta: "Inestabilidad y posible quiebra.", guia_docente: "Priorizar sostenibilidad." },
-                { puntos: 300, pregunta: "¿Cómo identificar un lujo innecesario?", opciones: { A: "A) No afecta directamente el resultado principal", B: "B) Es vital para el equipo" }, respuesta: "Aquel que no agrega valor esencial.", guia_docente: "Filtrar deseos de necesidades." },
-                { puntos: 400, pregunta: "¿Por qué Branch A frena el crecimiento?", opciones: { A: "A) Desvía fondos de lo importante", B: "B) Genera más ingresos" }, respuesta: "Sin fondos para reinvertir con seguridad.", guia_docente: "Evitar compras impulsivas." },
-                { puntos: 500, pregunta: "¿Cómo corregir un camino orientado a Branch A?", opciones: { A: "A) Reestructurar gastos e ir a Branch B", B: "B) Pedir más préstamos" }, respuesta: "Reenfocar hacia necesidades operativas.", guia_docente: "Ajustar presupuesto a tiempo." }
+                { puntos: 100, pregunta: "¿Qué caracteriza a las decisiones de Branch A?", opciones: { A: "Opción A: Gastar en lujos e impulsos.", B: "Opción B: Ahorrar e invertir en estabilidad." }, respuesta: "Incurrir en gastos superfluos.", guia_docente: "Analizar el riesgo de Branch A." },
+                { puntos: 200, pregunta: "¿Qué consecuencia inmediata genera Branch A?", opciones: { A: "Opción A: Inestabilidad financiera.", B: "Opción B: Mayor liquidez operativa." }, respuesta: "Inestabilidad y posible quiebra.", guia_docente: "Priorizar sostenibilidad." },
+                { puntos: 300, pregunta: "¿Cómo identificar un lujo innecesario?", opciones: { A: "Opción A: Aquel que no agrega valor esencial.", B: "Opción B: Un recurso vital para el equipo." }, respuesta: "Aquel que no agrega valor esencial.", guia_docente: "Filtrar deseos de necesidades." },
+                { puntos: 400, pregunta: "¿Por qué Branch A frena el crecimiento?", opciones: { A: "Opción A: Desvía fondos de lo importante.", B: "Opción B: Genera más ingresos." }, respuesta: "Quedarse sin fondos para reinvertir con seguridad.", guia_docente: "Evitar compras impulsivas." },
+                { puntos: 500, pregunta: "¿Cómo corregir un camino orientado a Branch A?", opciones: { A: "Opción A: Reenfocar hacia necesidades operativas (Branch B).", B: "Opción B: Pedir más préstamos irresponsables." }, respuesta: "Reenfocar hacia necesidades operativas.", guia_docente: "Ajustar el presupuesto a tiempo." }
               ]
             },
             {
               nombre: "Branch B: Estrategia y Estabilidad",
               icono: "✅",
               preguntas: [
-                { puntos: 100, pregunta: "¿Cuál es el pilar de Branch B?", opciones: { A: "A) Cubrir necesidades básicas y estabilidad", B: "B) Comprar escenografía ostentosa" }, respuesta: "Asegurar lo esencial primero.", guia_docente: "Otorga disciplina y liquidez." },
-                { puntos: 200, pregunta: "¿Qué otorga la disciplina en Branch B?", opciones: { A: "A) Liquidez para reinvertir con seguridad", B: "B) Deudas a largo plazo" }, respuesta: "Capacidad de reinversión sostenible.", guia_docente: "Branch B da estabilidad." },
-                { puntos: 300, pregunta: "¿Cómo beneficia Branch B al equipo de trabajo?", opciones: { A: "A) Garantiza pagos y recursos operativos", B: "B) Cancela pagos pendientes" }, respuesta: "Asegura pagos y continuidad.", guia_docente: "La tranquilidad operativa mejora el proyecto." },
-                { puntos: 400, pregunta: "¿Cuándo es seguro realizar un gasto opcional?", opciones: { A: "A) Tras asegurar la estabilidad de Branch B", B: "B) Al inicio de la producción sin reservas" }, respuesta: "Solo al tener reserva de estabilidad.", guia_docente: "El orden de prioridades importa." },
-                { puntos: 500, pregunta: "¿Por qué Branch B hace sostenible el proyecto?", opciones: { A: "A) Evita el endeudamiento irresponsable", B: "B) Aumenta los gastos innecesarios" }, respuesta: "Mantiene fondo operativo positivo.", guia_docente: "Base de la educación financiera." }
+                { puntos: 100, pregunta: "¿Cuál es el pilar de Branch B?", opciones: { A: "Opción A: Cubrir necesidades básicas y estabilidad.", B: "Opción B: Comprar escenografía ostentosa." }, respuesta: "Asegurar lo esencial primero.", guia_docente: "Otorga disciplina y liquidez." },
+                { puntos: 200, pregunta: "¿Qué otorga la disciplina en Branch B?", opciones: { A: "Opción A: Liquidez para reinvertir con seguridad.", B: "Opción B: Deudas a largo plazo." }, respuesta: "Capacidad de reinversión sostenible.", guia_docente: "Branch B da estabilidad." },
+                { puntos: 300, pregunta: "¿Cómo beneficia Branch B al equipo de trabajo?", opciones: { A: "Opción A: Garantiza pagos y recursos operativos.", B: "Opción B: Cancela pagos pendientes." }, respuesta: "Asegura pagos y continuidad.", guia_docente: "La tranquilidad operativa mejora el proyecto." },
+                { puntos: 400, pregunta: "¿Cuándo es seguro realizar un gasto opcional?", opciones: { A: "Opción A: Tras asegurar la estabilidad de Branch B.", B: "Opción B: Al inicio de la producción sin reservas." }, respuesta: "Solo al tener reserva de estabilidad.", guia_docente: "El orden de prioridades importa." },
+                { puntos: 500, pregunta: "¿Por qué Branch B hace sostenible el proyecto?", opciones: { A: "Opción A: Evita el endeudamiento irresponsable.", B: "Opción B: Aumenta los gastos innecesarios." }, respuesta: "Mantiene el fondo operativo en terreno positivo.", guia_docente: "Base de la educación financiera." }
               ]
             },
             {
               nombre: "Presupuesto y Flujo de Caja",
               icono: "💰",
               preguntas: [
-                { puntos: 100, pregunta: "¿Qué es el flujo de caja?", opciones: { A: "A) Registro de entradas y salidas de dinero", B: "B) El total de ganancias finales" }, respuesta: "El movimiento neto de dinero en el tiempo.", guia_docente: "Monitorear semanalmente." },
-                { puntos: 200, pregunta: "¿Por qué es riesgoso quedarse sin liquidez?", opciones: { A: "A) No se pueden cubrir gastos inmediatos", B: "B) Aumentan las ventas" }, respuesta: "Detiene la operación por falta de pago.", guia_docente: "Mantener siempre fondo de contingencia." },
-                { puntos: 300, pregunta: "¿Qué rubro debe blindarse en el presupuesto?", opciones: { A: "A) Fondo de imprevistos y operación", B: "B) Fiestas de producción" }, respuesta: "Imprevistos y costos fijos.", guia_docente: "Proteger el núcleo operativo." },
-                { puntos: 400, pregunta: "¿Qué diferencia hay entre costo fijo y variable?", opciones: { A: "A) El fijo no cambia con el nivel de actividad", B: "B) Ambos son impredecibles" }, respuesta: "Fijo es constante, variable cambia.", guia_docente: "Controlar variables rigurosamente." },
-                { puntos: 500, pregunta: "¿Cómo medir el éxito financiero de un proyecto?", opciones: { A: "A) Manteniendo rentabilidad y solvencia", B: "B) Gastando todo el presupuesto" }, respuesta: "Cumplir metas con solvencia positiva.", guia_docente: "Evaluar indicadores clave." }
+                { puntos: 100, pregunta: "¿Qué es el flujo de caja?", opciones: { A: "Opción A: Registro del movimiento neto de dinero.", B: "Opción B: El total de ganancias finales." }, respuesta: "El movimiento neto de dinero en el tiempo.", guia_docente: "Monitorear semanalmente." },
+                { puntos: 200, pregunta: "¿Por qué es riesgoso quedarse sin liquidez?", opciones: { A: "Opción A: No se pueden cubrir gastos inmediatos.", B: "Opción B: Aumentan las ventas." }, respuesta: "Detiene la operación por falta de pago.", guia_docente: "Mantener siempre fondo de contingencia." },
+                { puntos: 300, pregunta: "¿Qué rubro debe blindarse en el presupuesto?", opciones: { A: "Opción A: Fondo de imprevistos y operación.", B: "Opción B: Fiestas de producción." }, respuesta: "Imprevistos y costos fijos.", guia_docente: "Proteger el núcleo operativo." },
+                { puntos: 400, pregunta: "¿Qué diferencia hay entre costo fijo y variable?", opciones: { A: "Opción A: El fijo es constante, el variable cambia.", B: "Opción B: Ambos son impredecibles." }, respuesta: "El fijo es constante, el variable cambia.", guia_docente: "Controlar variables rigurosamente." },
+                { puntos: 500, pregunta: "¿Cómo medir el éxito financiero de un proyecto?", opciones: { A: "Opción A: Cumpliendo metas con solvencia positiva.", B: "Opción B: Gastando todo el presupuesto." }, respuesta: "Cumplir metas con solvencia positiva.", guia_docente: "Evaluar indicadores clave." }
               ]
             },
             {
               nombre: "De la Película a tu Vida Real",
               icono: "🌟",
               preguntas: [
-                { puntos: 100, pregunta: "¿Cómo aplicas Branch B en tus finanzas personales?", opciones: { A: "A) Cubriendo renta, comida y salud primero", B: "B) Comprando ropa de marca a crédito" }, respuesta: "Priorizar vivienda, salud y alimentos.", guia_docente: "Misma regla: necesidades antes que deseos." },
-                { puntos: 200, pregunta: "¿Qué es un fondo de emergencia personal?", opciones: { A: "A) Ahorro para imprevistos de 3 a 6 meses", B: "B) Dinero para vacaciones" }, respuesta: "Reserva para emergencias de vida.", guia_docente: "Garantiza paz mental." },
-                { puntos: 300, pregunta: "¿Por qué evitar las deudas por impulsos?", opciones: { A: "A) Merman tu liquidez futura con intereses", B: "B) Generan rendimiento de inversión" }, respuesta: "El interés reduce tu capacidad de ahorro.", guia_docente: "Evitar la trampa de tarjetas de crédito." },
-                { puntos: 400, pregunta: "¿Cuál es el primer paso para un plan financiero?", opciones: { A: "A) Diagnosticar ingresos vs. gastos reales", B: "B) Pedir un crédito bancario" }, respuesta: "Elaborar un presupuesto consciente.", guia_docente: "Conocer la realidad financiera." },
-                { puntos: 500, pregunta: "¿Qué beneficio da la libertad financiera?", opciones: { A: "A) Capacidad de decidir con estabilidad", B: "B) Gastar sin medir límites" }, respuesta: "Autonomía y seguridad económica.", guia_docente: "Meta última del aprendizaje." }
+                { puntos: 100, pregunta: "¿Cómo aplicas Branch B en tus finanzas personales?", opciones: { A: "Opción A: Priorizar vivienda, salud y alimentos.", B: "Opción B: Comprar ropa de marca a crédito." }, respuesta: "Priorizar vivienda, salud y alimentos.", guia_docente: "Misma regla: necesidades antes que deseos." },
+                { puntos: 200, pregunta: "¿Qué es un fondo de emergencia personal?", opciones: { A: "Opción A: Reserva para emergencias de 3 a 6 meses.", B: "Opción B: Dinero reservado para vacaciones." }, respuesta: "Reserva para emergencias de vida.", guia_docente: "Garantiza paz mental." },
+                { puntos: 300, pregunta: "¿Por qué evitar las deudas por impulsos?", opciones: { A: "Opción A: El interés reduce tu capacidad de ahorro.", B: "Opción B: Genera rendimiento de inversión." }, respuesta: "El interés reduce tu capacidad de ahorro.", guia_docente: "Evitar la trampa de tarjetas de crédito." },
+                { puntos: 400, pregunta: "¿Cuál es el primer paso para un plan financiero?", opciones: { A: "Opción A: Elaborar un presupuesto consciente.", B: "Opción B: Pedir un crédito bancario." }, respuesta: "Elaborar un presupuesto consciente.", guia_docente: "Conocer la realidad financiera." },
+                { puntos: 500, pregunta: "¿Qué beneficio da la libertad financiera?", opciones: { A: "Opción A: Autonomía y seguridad económica.", B: "Opción B: Gastar sin medir límites." }, respuesta: "Autonomía y seguridad económica.", guia_docente: "Meta última del aprendizaje." }
               ]
             }
           ]
@@ -337,10 +333,9 @@
       });
     }
 
-    // Variable global para almacenar el texto actual de la reflexión
     let textoReflexionActual = "";
 
-    // 3. Abrir Ventana Modal de Pregunta con datos únicos por casilla
+    // 3. Abrir Ventana Modal de Pregunta
     function abrirModalPreguntaDirecto(catIndex, qIndex) {
       const qModal = document.getElementById('question-modal');
       if (!qModal) return;
@@ -371,10 +366,9 @@
 
       const ansText = document.getElementById('modal-answer-text');
       const guideText = document.getElementById('modal-guide-text');
-      if (ansText) ansText.textContent = qObj ? qObj.respuesta : "Priorizar necesidades garantiza estabilidad.";
-      if (guideText) guideText.textContent = qObj ? qObj.guia_docente : "Enfocarse en Branch B permite mantener la liquidez del proyecto.";
+      if (ansText) ansText.textContent = qObj ? qObj.respuesta : "Priorizar necesidades garantiza la estabilidad del proyecto.";
+      if (guideText) guideText.textContent = qObj ? qObj.guia_docente : "Enfocarse en Branch B permite mantener la liquidez necesaria.";
 
-      // Crear la reflexión de IA dinámica para esta pregunta
       textoReflexionActual = `¡Excelente análisis! Para la categoría ${catObj ? catObj.nombre : 'Finanzas'}, la respuesta clave es: ${qObj ? qObj.respuesta : 'Priorizar la estabilidad'}. Recuerda que al enfocarte en Branch B, mantienes la liquidez operativa y previenes riesgos de quiebra.`;
 
       const aiText = document.getElementById('ai-reflection-text');
@@ -382,26 +376,31 @@
         aiText.textContent = textoReflexionActual;
       }
 
-      // Asegurar que la caja de respuestas inicie oculta
       const guideBox = document.getElementById('teacher-guide-box');
       if (guideBox) guideBox.classList.add('hidden');
 
-      // Habilitar botones de acción
+      // HABILITAR SIEMPRE BOTONES DE CORRECTO E INCORRECTO
       const btnCorrect = document.getElementById('btn-correct');
       const btnIncorrect = document.getElementById('btn-incorrect');
-      if (btnCorrect) btnCorrect.disabled = false;
-      if (btnIncorrect) btnIncorrect.disabled = false;
+      if (btnCorrect) {
+        btnCorrect.disabled = false;
+        btnCorrect.removeAttribute('disabled');
+      }
+      if (btnIncorrect) {
+        btnIncorrect.disabled = false;
+        btnIncorrect.removeAttribute('disabled');
+      }
 
       qModal.classList.remove('hidden');
       qModal.setAttribute('style', 'display: flex !important; visibility: visible !important; opacity: 1 !important; z-index: 99999 !important;');
     }
 
-    // 4. Función del Sintetizador de Voz (Español Latino)
-    function hablarTexto(texto) {
+    // 4. Voz ÚNICAMENTE para la Reflexión de IA
+    function hablarReflexion() {
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // Detener voz activa
+        window.speechSynthesis.cancel();
 
-        const msg = texto || textoReflexionActual || "¡Excelente decisión! Priorizar las necesidades garantiza la estabilidad de tu proyecto.";
+        const msg = textoReflexionActual || "¡Excelente decisión! Priorizar las necesidades garantiza la estabilidad de tu proyecto.";
         const utterance = new SpeechSynthesisUtterance(msg);
 
         const voices = window.speechSynthesis.getVoices();
@@ -419,11 +418,11 @@
       }
     }
 
-    // 5. Configurar Interacciones y Cliks de la Interfaz
+    // 5. Configurar Interacciones
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(fuerzaRendimientoAPI, 500);
 
-      // Botón "Volver al Tablero"
+      // Volver al Tablero
       const btnCloseModal = document.getElementById('btn-close-modal');
       const qModal = document.getElementById('question-modal');
       if (btnCloseModal && qModal) {
@@ -434,7 +433,7 @@
         };
       }
 
-      // Código QR
+      // Código QR para Alumnos
       const btnShowQr = document.getElementById('btn-show-qr');
       const qrModal = document.getElementById('qr-modal');
       const btnCloseQr = document.getElementById('btn-close-qr');
@@ -515,17 +514,14 @@
           guideBox.classList.toggle('hidden');
           const estaOculto = guideBox.classList.contains('hidden');
           guideBox.style.display = estaOculto ? 'none' : 'block';
-          if (!estaOculto) {
-            hablarTexto(); // Reproduce la voz al abrir la respuesta
-          }
         };
       }
 
-      // Escuchar clics en todos los botones que contengan "Reflexión IA"
+      // Botón "Reflexión IA"
       document.addEventListener('click', (e) => {
         const btn = e.target.closest('button');
         if (btn && btn.textContent.includes('Reflexión IA')) {
-          hablarTexto();
+          hablarReflexion();
         }
       });
     });
