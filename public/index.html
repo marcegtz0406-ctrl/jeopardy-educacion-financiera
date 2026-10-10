@@ -208,7 +208,7 @@
   </div>
 <script src="host.js"></script>
   <script>
-    // 1. Ocultar instrucciones
+    // 1. Ocultar instrucciones iniciales
     function cerrarInstrucciones() {
       const modal = document.getElementById('modalInstructions');
       if (modal) modal.style.display = 'none';
@@ -217,7 +217,7 @@
 
     let preguntasLocales = null;
 
-    // 2. Cargar y renderizar el tablero
+    // 2. Cargar y dibujar el tablero de forma ultra segura
     async function fuerzaRendimientoAPI() {
       const grid = document.getElementById('board-grid');
       if (!grid) return;
@@ -317,34 +317,46 @@
       if (ansText) ansText.textContent = qObj ? qObj.respuesta : "Las necesidades garantizan la operación básica, mientras que los deseos son opcionales.";
       if (guideText) guideText.textContent = qObj ? qObj.guia_docente : "Enfocarse en Branch B permite mantener la estabilidad del proyecto.";
 
-      const aiText = document.getElementById('ai-reflection-text');
-      if (aiText) {
-        aiText.textContent = `¡Excelente decisión! Recuerda que al priorizar lo indispensable (Branch B), mantienes la liquidez y la estabilidad operativa de tu proyecto antes de incurrir en gastos superfluos.`;
-      }
+      // Habilitar botones de acción
+      const btnCorrect = document.getElementById('btn-correct');
+      const btnIncorrect = document.getElementById('btn-incorrect');
+      if (btnCorrect) btnCorrect.disabled = false;
+      if (btnIncorrect) btnIncorrect.disabled = false;
 
       qModal.classList.remove('hidden');
       qModal.setAttribute('style', 'display: flex !important; visibility: visible !important; opacity: 1 !important; z-index: 99999 !important;');
     }
 
-    // 4. Conectar Eventos de la Interfaz (QR, Ganadores, Reflexión e Interacciones)
+    // 4. Configurar Eventos Generales y Controles
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(fuerzaRendimientoAPI, 500);
 
-      // Botón Código QR Header
+      // --- CÓDIGO QR Y LINK PARA ALUMNOS ---
       const btnShowQr = document.getElementById('btn-show-qr');
       const qrModal = document.getElementById('qr-modal');
       const btnCloseQr = document.getElementById('btn-close-qr');
+      const qrImg = document.getElementById('qr-code-img');
+      const qrInput = document.getElementById('qr-url-input');
+
+      const buzzerUrl = window.location.origin + '/buzzer.html';
+      if (qrInput) qrInput.value = buzzerUrl;
+
       if (btnShowQr && qrModal) {
         btnShowQr.onclick = () => {
+          if (qrImg) {
+            // Generador dinámico de QR público confiable
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(buzzerUrl)}`;
+          }
           qrModal.classList.remove('hidden');
           qrModal.setAttribute('style', 'display: flex !important; z-index: 99999 !important;');
         };
       }
+
       if (btnCloseQr && qrModal) {
         btnCloseQr.onclick = () => qrModal.setAttribute('style', 'display: none !important;');
       }
 
-      // Botón Finalizar y Ver Ganador Header
+      // --- GANADORES / PODIO ---
       const btnEndGame = document.getElementById('btn-end-game');
       const podiumModal = document.getElementById('podium-modal');
       const btnClosePodium = document.getElementById('btn-close-podium');
@@ -358,29 +370,50 @@
         btnClosePodium.onclick = () => podiumModal.setAttribute('style', 'display: none !important;');
       }
 
-      // Botón Volver al Tablero dentro del Modal
-      const btnCloseModal = document.getElementById('btn-close-modal');
-      const qModal = document.getElementById('question-modal');
-      if (btnCloseModal && qModal) {
-        btnCloseModal.onclick = () => {
-          qModal.setAttribute('style', 'display: none !important;');
+      // --- REINICIAR PARTIDA ---
+      const btnReset = document.getElementById('btn-reset');
+      if (btnReset) {
+        btnReset.onclick = () => {
+          if (confirm('¿Deseas reiniciar el tablero y limpiar las preguntas respondidas?')) {
+            document.querySelectorAll('.question-card').forEach(card => card.classList.remove('answered'));
+          }
         };
       }
 
-      // Botón Ver Respuesta / Reflexión IA
+      // --- ACTIVAR BUZZER / CONTROLES MODAL ---
+      const btnActivateBuzzer = document.getElementById('btn-activate-buzzer');
+      const buzzerBanner = document.getElementById('buzzer-status-banner');
+      if (btnActivateBuzzer) {
+        btnActivateBuzzer.onclick = () => {
+          if (buzzerBanner) {
+            buzzerBanner.className = 'buzzer-status-bar state-active';
+            const headline = document.getElementById('buzzer-headline');
+            if (headline) headline.textContent = '⚡ Buzzer Activo - ¡Pulsadores Listos!';
+          }
+          if (typeof socket !== 'undefined' && socket && socket.connected) {
+            socket.emit('activate-buzzer');
+          }
+        };
+      }
+
+      // --- VER RESPUESTA & REFLEXIÓN DE IA ---
       const btnToggleAnswer = document.getElementById('btn-toggle-answer');
       const guideBox = document.getElementById('teacher-guide-box');
       if (btnToggleAnswer && guideBox) {
         btnToggleAnswer.onclick = () => {
           guideBox.classList.toggle('hidden');
-          if (!guideBox.classList.contains('hidden')) {
-            hablarReflexion();
-          }
+          guideBox.style.display = guideBox.classList.contains('hidden') ? 'none' : 'block';
         };
+      }
+
+      // Conectar evento al botón "Reflexión IA"
+      const btnAiReflection = document.querySelector('.btn-action-ai') || document.getElementById('btn-ai-reflection');
+      if (btnAiReflection) {
+        btnAiReflection.onclick = () => hablarReflexion();
       }
     });
 
-    // 5. Sistema de Voz en Español Latinoamericano
+    // 5. Sintetizador de Voz Latinoamericana
     function obtenerVozLatinoamericana() {
       const voices = window.speechSynthesis.getVoices();
       return voices.find(v => v.lang === 'es-MX') ||
@@ -391,8 +424,7 @@
     }
 
     function hablarReflexion() {
-      const el = document.getElementById('ai-reflection-text');
-      const texto = el && el.innerText ? el.innerText : "¡Excelente decisión! Priorizar Branch B asegura liquidez y estabilidad financiera.";
+      const texto = "¡Excelente decisión! Recuerda que al priorizar lo indispensable, mantienes la liquidez y la estabilidad operativa de tu proyecto antes de incurrir en gastos superfluos.";
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(texto);
       const voz = obtenerVozLatinoamericana();
@@ -405,6 +437,9 @@
     if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
       speechSynthesis.onvoiceschanged = obtenerVozLatinoamericana;
     }
+  </script>
+</body>
+</html>
   </script>
 </body>
 </html>
