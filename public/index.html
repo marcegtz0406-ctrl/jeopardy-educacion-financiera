@@ -208,21 +208,16 @@
   </div>
 <script src="host.js"></script>
   <script>
-    // 1. Ocultar modal de instrucciones sin depender de otras funciones
+    // 1. Ocultar instrucciones
     function cerrarInstrucciones() {
       const modal = document.getElementById('modalInstructions');
-      if (modal) {
-        modal.style.display = 'none';
-      }
-      // Dibuja el tablero al cerrar
-      if (typeof fuerzaRendimientoAPI === 'function') {
-        fuerzaRendimientoAPI();
-      }
+      if (modal) modal.style.display = 'none';
+      if (typeof fuerzaRendimientoAPI === 'function') fuerzaRendimientoAPI();
     }
 
     let preguntasLocales = null;
 
-    // 2. Cargar y dibujar el tablero
+    // 2. Cargar y renderizar el tablero
     async function fuerzaRendimientoAPI() {
       const grid = document.getElementById('board-grid');
       if (!grid) return;
@@ -231,11 +226,9 @@
       try {
         let res = await fetch('/preguntas.json');
         if (!res.ok) res = await fetch('/api/questions');
-        if (res.ok) {
-          preguntasLocales = await res.json();
-        }
+        if (res.ok) preguntasLocales = await res.json();
       } catch (e) {
-        console.warn("No se pudo obtener preguntas.json vía fetch:", e);
+        console.warn("No se pudo obtener preguntas.json:", e);
       }
 
       if (!preguntasLocales || !preguntasLocales.categorias) {
@@ -273,11 +266,9 @@
 
           pointCard.onclick = () => {
             pointCard.classList.add('answered');
-
             if (typeof socket !== 'undefined' && socket && socket.connected) {
               socket.emit('open-question', { catIndex, qIndex });
             } 
-            
             abrirModalPreguntaDirecto(catIndex, qIndex);
           };
 
@@ -288,7 +279,7 @@
       });
     }
 
-    // 3. Abrir ventana modal con la pregunta (Forzado Directo)
+    // 3. Abrir Ventana Modal de Pregunta
     function abrirModalPreguntaDirecto(catIndex, qIndex) {
       const qModal = document.getElementById('question-modal');
       if (!qModal) return;
@@ -328,18 +319,68 @@
 
       const aiText = document.getElementById('ai-reflection-text');
       if (aiText) {
-        aiText.textContent = `¡Excelente decisión! Escogiste una muy buena respuesta. Recuerda que al priorizar lo indispensable (Branch B), mantienes la liquidez y la estabilidad operativa de tu proyecto antes de incurrir en gastos superfluos.`;
+        aiText.textContent = `¡Excelente decisión! Recuerda que al priorizar lo indispensable (Branch B), mantienes la liquidez y la estabilidad operativa de tu proyecto antes de incurrir en gastos superfluos.`;
       }
 
       qModal.classList.remove('hidden');
       qModal.setAttribute('style', 'display: flex !important; visibility: visible !important; opacity: 1 !important; z-index: 99999 !important;');
     }
 
+    // 4. Conectar Eventos de la Interfaz (QR, Ganadores, Reflexión e Interacciones)
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(fuerzaRendimientoAPI, 500);
+
+      // Botón Código QR Header
+      const btnShowQr = document.getElementById('btn-show-qr');
+      const qrModal = document.getElementById('qr-modal');
+      const btnCloseQr = document.getElementById('btn-close-qr');
+      if (btnShowQr && qrModal) {
+        btnShowQr.onclick = () => {
+          qrModal.classList.remove('hidden');
+          qrModal.setAttribute('style', 'display: flex !important; z-index: 99999 !important;');
+        };
+      }
+      if (btnCloseQr && qrModal) {
+        btnCloseQr.onclick = () => qrModal.setAttribute('style', 'display: none !important;');
+      }
+
+      // Botón Finalizar y Ver Ganador Header
+      const btnEndGame = document.getElementById('btn-end-game');
+      const podiumModal = document.getElementById('podium-modal');
+      const btnClosePodium = document.getElementById('btn-close-podium');
+      if (btnEndGame && podiumModal) {
+        btnEndGame.onclick = () => {
+          podiumModal.classList.remove('hidden');
+          podiumModal.setAttribute('style', 'display: flex !important; z-index: 99999 !important;');
+        };
+      }
+      if (btnClosePodium && podiumModal) {
+        btnClosePodium.onclick = () => podiumModal.setAttribute('style', 'display: none !important;');
+      }
+
+      // Botón Volver al Tablero dentro del Modal
+      const btnCloseModal = document.getElementById('btn-close-modal');
+      const qModal = document.getElementById('question-modal');
+      if (btnCloseModal && qModal) {
+        btnCloseModal.onclick = () => {
+          qModal.setAttribute('style', 'display: none !important;');
+        };
+      }
+
+      // Botón Ver Respuesta / Reflexión IA
+      const btnToggleAnswer = document.getElementById('btn-toggle-answer');
+      const guideBox = document.getElementById('teacher-guide-box');
+      if (btnToggleAnswer && guideBox) {
+        btnToggleAnswer.onclick = () => {
+          guideBox.classList.toggle('hidden');
+          if (!guideBox.classList.contains('hidden')) {
+            hablarReflexion();
+          }
+        };
+      }
     });
 
-    // 4. Voz en Español Latinoamericano
+    // 5. Sistema de Voz en Español Latinoamericano
     function obtenerVozLatinoamericana() {
       const voices = window.speechSynthesis.getVoices();
       return voices.find(v => v.lang === 'es-MX') ||
@@ -351,9 +392,9 @@
 
     function hablarReflexion() {
       const el = document.getElementById('ai-reflection-text');
-      if (!el || !el.innerText) return;
+      const texto = el && el.innerText ? el.innerText : "¡Excelente decisión! Priorizar Branch B asegura liquidez y estabilidad financiera.";
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(el.innerText);
+      const utterance = new SpeechSynthesisUtterance(texto);
       const voz = obtenerVozLatinoamericana();
       if (voz) utterance.voice = voz;
       utterance.rate = 0.95; 
