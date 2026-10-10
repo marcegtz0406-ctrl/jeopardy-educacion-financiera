@@ -208,73 +208,88 @@
   </div>
 <script src="host.js"></script>
   <script>
-    // 1. Oculta el modal de instrucciones y dibuja el tablero
+    // 1. Ocultar instrucciones
     function cerrarInstrucciones() {
       const modal = document.getElementById('modalInstructions');
       if (modal) modal.style.display = 'none';
-      
-      // Construir el tablero inmediatamente al presionar el botón
       fuerzaRendimientoAPI();
     }
 
-    // 2. Función para cargar y dibujar las celdas del tablero
+    // 2. Cargar y dibujar el tablero de forma ultra segura
     async function fuerzaRendimientoAPI() {
       const grid = document.getElementById('board-grid');
       if (!grid) return;
+      if (grid.children.length > 0) return; // Evitar duplicados si ya renderizó
 
-      // Si el tablero ya tiene celdas cargadas, no lo volvemos a dibujar
-      if (grid.children.length > 0) return;
+      let data = null;
 
+      // Intentamos obtener las preguntas de preguntas.json primero, luego /api/questions
       try {
-        const res = await fetch('/api/questions');
-        if (!res.ok) throw new Error('No se pudo obtener /api/questions');
-        const data = await res.json();
-
-        if (!data || !data.categorias) return;
-
-        grid.innerHTML = ''; // Limpiamos el contenedor por seguridad
-
-        data.categorias.forEach((cat, catIndex) => {
-          // Crear columna por categoría
-          const col = document.createElement('div');
-          col.className = 'category-column';
-
-          // Encabezado con título e ícono de la categoría
-          const catCard = document.createElement('div');
-          catCard.className = 'category-header';
-          catCard.innerHTML = `<h2>${cat.icono || '🎬'} ${cat.nombre}</h2>`;
-          col.appendChild(catCard);
-
-          // Tarjetas de puntos ($100, $200, etc.)
-          cat.preguntas.forEach((q, qIndex) => {
-            const pointCard = document.createElement('div');
-            pointCard.className = 'question-card';
-            pointCard.id = `card-${catIndex}-${qIndex}`;
-            pointCard.innerHTML = `<span class="points">$${q.puntos}</span>`;
-            
-            // Evento al presionar sobre la tarjeta de dinero
-            pointCard.onclick = () => {
-              if (typeof socket !== 'undefined' && socket.connected) {
-                socket.emit('open-question', { catIndex, qIndex });
-              }
-            };
-
-            col.appendChild(pointCard);
-          });
-
-          grid.appendChild(col);
-        });
-      } catch (err) {
-        console.error("Error al cargar el tablero vía API:", err);
+        let res = await fetch('/preguntas.json');
+        if (!res.ok) res = await fetch('/api/questions');
+        if (res.ok) {
+          data = await res.json();
+        }
+      } catch (e) {
+        console.warn("No se pudo obtener el JSON por fetch, usando fallback local...", e);
       }
+
+      // Si por alguna razón la red falla o no encuentra el archivo JSON, cargamos la estructura directa
+      if (!data || !data.categorias) {
+        data = {
+          categorias: [
+            { nombre: "Necesidades vs. Deseos en el Set", icono: "🎬" },
+            { nombre: "Branch A: La Trampa de los Lujos", icono: "⚠️" },
+            { nombre: "Branch B: Estrategia y Estabilidad", icono: "✅" },
+            { nombre: "Presupuesto y Flujo de Caja", icono: "💰" },
+            { nombre: "De la Película a tu Vida Real", icono: "🌟" }
+          ]
+        };
+      }
+
+      grid.innerHTML = '';
+
+      data.categorias.forEach((cat, catIndex) => {
+        const col = document.createElement('div');
+        col.className = 'category-column';
+
+        // Header Categoría
+        const catCard = document.createElement('div');
+        catCard.className = 'category-header';
+        catCard.innerHTML = `<h2>${cat.icono || '🎬'} ${cat.nombre}</h2>`;
+        col.appendChild(catCard);
+
+        // Si data traía preguntas usarlas, sino pintar las 5 tarjetas ($100 a $500)
+        const preguntasList = cat.preguntas || [
+          { puntos: 100 }, { puntos: 200 }, { puntos: 300 }, { puntos: 400 }, { puntos: 500 }
+        ];
+
+        preguntasList.forEach((q, qIndex) => {
+          const pointCard = document.createElement('div');
+          pointCard.className = 'question-card';
+          pointCard.id = `card-${catIndex}-${qIndex}`;
+          pointCard.innerHTML = `<span class="points">$${q.puntos}</span>`;
+
+          pointCard.onclick = () => {
+            if (typeof socket !== 'undefined' && socket && socket.connected) {
+              socket.emit('open-question', { catIndex, qIndex });
+            } else if (typeof renderQuestionModal === 'function') {
+              renderQuestionModal(catIndex, qIndex);
+            }
+          };
+
+          col.appendChild(pointCard);
+        });
+
+        grid.appendChild(col);
+      });
     }
 
-    // 3. Intenta cargar automáticamente en caso de que se recargue la página sin modal
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(fuerzaRendimientoAPI, 600);
+      setTimeout(fuerzaRendimientoAPI, 500);
     });
 
-    // 4. Configuración de Voz en Español Latino
+    // 3. Audio en Español Latino
     function obtenerVozLatinoamericana() {
       const voices = window.speechSynthesis.getVoices();
       return voices.find(v => v.lang === 'es-MX') ||
@@ -298,7 +313,7 @@
 
     if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
       speechSynthesis.onvoiceschanged = obtenerVozLatinoamericana;
-   301    }
-302  </script>
-303  </body>
-304  </html>
+    }
+  </script>
+</body>
+</html>
