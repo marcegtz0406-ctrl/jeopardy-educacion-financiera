@@ -208,7 +208,7 @@
   </div>
 <script src="host.js"></script>
   <script>
-    // 1. Ocultar instrucciones iniciales
+    // 1. Ocultar instrucciones
     function cerrarInstrucciones() {
       const modal = document.getElementById('modalInstructions');
       if (modal) modal.style.display = 'none';
@@ -228,7 +228,7 @@
         if (!res.ok) res = await fetch('/api/questions');
         if (res.ok) preguntasLocales = await res.json();
       } catch (e) {
-        console.warn("No se pudo obtener preguntas.json:", e);
+        console.warn("No se pudo obtener preguntas.json vía fetch:", e);
       }
 
       if (!preguntasLocales || !preguntasLocales.categorias) {
@@ -317,7 +317,12 @@
       if (ansText) ansText.textContent = qObj ? qObj.respuesta : "Las necesidades garantizan la operación básica, mientras que los deseos son opcionales.";
       if (guideText) guideText.textContent = qObj ? qObj.guia_docente : "Enfocarse en Branch B permite mantener la estabilidad del proyecto.";
 
-      // Habilitar botones de acción
+      const aiText = document.getElementById('ai-reflection-text');
+      if (aiText) {
+        aiText.textContent = `¡Excelente decisión! Recuerda que al priorizar lo indispensable (Branch B), mantienes la liquidez y la estabilidad operativa de tu proyecto antes de incurrir en gastos superfluos.`;
+      }
+
+      // Habilitar botones
       const btnCorrect = document.getElementById('btn-correct');
       const btnIncorrect = document.getElementById('btn-incorrect');
       if (btnCorrect) btnCorrect.disabled = false;
@@ -327,24 +332,61 @@
       qModal.setAttribute('style', 'display: flex !important; visibility: visible !important; opacity: 1 !important; z-index: 99999 !important;');
     }
 
-    // 4. Configurar Eventos Generales y Controles
+    // 4. Función de voz para la Reflexión de IA
+    function hablarReflexion() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Cancelar lecturas previas
+        
+        const texto = "¡Excelente decisión! Recuerda que al priorizar lo indispensable, mantienes la liquidez y la estabilidad operativa de tu proyecto antes de incurrir en gastos superfluos.";
+        const utterance = new SpeechSynthesisUtterance(texto);
+
+        // Forzar selección de voz en español latino
+        const voices = window.speechSynthesis.getVoices();
+        const vozLatina = voices.find(v => v.lang === 'es-MX') ||
+                          voices.find(v => v.lang === 'es-419') ||
+                          voices.find(v => v.lang === 'es-US') ||
+                          voices.find(v => v.lang.startsWith('es') && !v.lang.includes('ES')) ||
+                          voices.find(v => v.lang.startsWith('es'));
+
+        if (vozLatina) utterance.voice = vozLatina;
+        utterance.rate = 0.95;
+        utterance.pitch = 1.0;
+
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert("Tu navegador no soporta la lectura de voz.");
+      }
+    }
+
+    // 5. Configuración de Eventos de la Interfaz
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(fuerzaRendimientoAPI, 500);
 
-      // --- CÓDIGO QR Y LINK PARA ALUMNOS ---
+      // --- CERRAR MODAL "VOLVER AL TABLERO" ---
+      const btnCloseModal = document.getElementById('btn-close-modal');
+      const qModal = document.getElementById('question-modal');
+      if (btnCloseModal && qModal) {
+        btnCloseModal.onclick = () => {
+          qModal.classList.add('hidden');
+          qModal.setAttribute('style', 'display: none !important;');
+          window.speechSynthesis.cancel(); // Detener voz al cerrar
+        };
+      }
+
+      // --- CÓDIGO QR Y CONEXIÓN DE ALUMNOS ---
       const btnShowQr = document.getElementById('btn-show-qr');
       const qrModal = document.getElementById('qr-modal');
       const btnCloseQr = document.getElementById('btn-close-qr');
       const qrImg = document.getElementById('qr-code-img');
       const qrInput = document.getElementById('qr-url-input');
 
+      // Ruta directa a buzzer.html para los dispositivos móviles
       const buzzerUrl = window.location.origin + '/buzzer.html';
       if (qrInput) qrInput.value = buzzerUrl;
 
       if (btnShowQr && qrModal) {
         btnShowQr.onclick = () => {
           if (qrImg) {
-            // Generador dinámico de QR público confiable
             qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(buzzerUrl)}`;
           }
           qrModal.classList.remove('hidden');
@@ -370,33 +412,43 @@
         btnClosePodium.onclick = () => podiumModal.setAttribute('style', 'display: none !important;');
       }
 
-      // --- REINICIAR PARTIDA ---
+      // --- REINICIAR JUEGO ---
       const btnReset = document.getElementById('btn-reset');
       if (btnReset) {
         btnReset.onclick = () => {
-          if (confirm('¿Deseas reiniciar el tablero y limpiar las preguntas respondidas?')) {
+          if (confirm('¿Deseas reiniciar el tablero?')) {
             document.querySelectorAll('.question-card').forEach(card => card.classList.remove('answered'));
           }
         };
       }
 
-      // --- ACTIVAR BUZZER / CONTROLES MODAL ---
+      // --- BUZZER (ACTIVAR / PAUSAR) ---
       const btnActivateBuzzer = document.getElementById('btn-activate-buzzer');
       const buzzerBanner = document.getElementById('buzzer-status-banner');
+      let buzzerActivo = false;
+
       if (btnActivateBuzzer) {
         btnActivateBuzzer.onclick = () => {
+          buzzerActivo = !buzzerActivo;
           if (buzzerBanner) {
-            buzzerBanner.className = 'buzzer-status-bar state-active';
             const headline = document.getElementById('buzzer-headline');
-            if (headline) headline.textContent = '⚡ Buzzer Activo - ¡Pulsadores Listos!';
+            if (buzzerActivo) {
+              buzzerBanner.className = 'buzzer-status-bar state-active';
+              if (headline) headline.textContent = '⚡ Buzzer Activo - Esperando Pulsador';
+              btnActivateBuzzer.textContent = '⏸️ PAUSAR BUZZER';
+            } else {
+              buzzerBanner.className = 'buzzer-status-bar state-idle';
+              if (headline) headline.textContent = 'Buzzer en Espera';
+              btnActivateBuzzer.textContent = '⚡ ACTIVAR BUZZER';
+            }
           }
           if (typeof socket !== 'undefined' && socket && socket.connected) {
-            socket.emit('activate-buzzer');
+            socket.emit(buzzerActivo ? 'activate-buzzer' : 'pause-buzzer');
           }
         };
       }
 
-      // --- VER RESPUESTA & REFLEXIÓN DE IA ---
+      // --- VER RESPUESTA ---
       const btnToggleAnswer = document.getElementById('btn-toggle-answer');
       const guideBox = document.getElementById('teacher-guide-box');
       if (btnToggleAnswer && guideBox) {
@@ -406,40 +458,16 @@
         };
       }
 
-      // Conectar evento al botón "Reflexión IA"
+      // --- BOTÓN REFLEXIÓN IA (HABLAR EN VOZ ALTA) ---
       const btnAiReflection = document.querySelector('.btn-action-ai') || document.getElementById('btn-ai-reflection');
       if (btnAiReflection) {
         btnAiReflection.onclick = () => hablarReflexion();
       }
     });
 
-    // 5. Sintetizador de Voz Latinoamericana
-    function obtenerVozLatinoamericana() {
-      const voices = window.speechSynthesis.getVoices();
-      return voices.find(v => v.lang === 'es-MX') ||
-             voices.find(v => v.lang === 'es-419') ||
-             voices.find(v => v.lang === 'es-US') ||
-             voices.find(v => v.lang.startsWith('es') && !v.lang.includes('ES')) ||
-             voices.find(v => v.lang.startsWith('es'));
-    }
-
-    function hablarReflexion() {
-      const texto = "¡Excelente decisión! Recuerda que al priorizar lo indispensable, mantienes la liquidez y la estabilidad operativa de tu proyecto antes de incurrir en gastos superfluos.";
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(texto);
-      const voz = obtenerVozLatinoamericana();
-      if (voz) utterance.voice = voz;
-      utterance.rate = 0.95; 
-      utterance.pitch = 1.0;
-      window.speechSynthesis.speak(utterance);
-    }
-
     if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = obtenerVozLatinoamericana;
+      speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
     }
-  </script>
-</body>
-</html>
   </script>
 </body>
 </html>
