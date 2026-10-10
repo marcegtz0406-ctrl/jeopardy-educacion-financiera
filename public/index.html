@@ -208,16 +208,21 @@
   </div>
 <script src="host.js"></script>
   <script>
-    // 1. Ocultar instrucciones
+    // 1. Ocultar modal de instrucciones sin depender de otras funciones
     function cerrarInstrucciones() {
       const modal = document.getElementById('modalInstructions');
-      if (modal) modal.style.display = 'none';
-      fuerzaRendimientoAPI();
+      if (modal) {
+        modal.style.display = 'none';
+      }
+      // Dibuja el tablero al cerrar
+      if (typeof fuerzaRendimientoAPI === 'function') {
+        fuerzaRendimientoAPI();
+      }
     }
 
     let preguntasLocales = null;
 
-    // 2. Cargar y dibujar el tablero de forma ultra segura conectada a host.js
+    // 2. Cargar y dibujar el tablero
     async function fuerzaRendimientoAPI() {
       const grid = document.getElementById('board-grid');
       if (!grid) return;
@@ -283,7 +288,7 @@
       });
     }
 
-   // 3. Abrir ventana modal con la pregunta (Forzado Directo)
+    // 3. Abrir ventana modal con la pregunta (Forzado Directo)
     function abrirModalPreguntaDirecto(catIndex, qIndex) {
       const qModal = document.getElementById('question-modal');
       if (!qModal) return;
@@ -291,17 +296,14 @@
       const catObj = preguntasLocales && preguntasLocales.categorias ? preguntasLocales.categorias[catIndex] : null;
       const qObj = catObj && catObj.preguntas ? catObj.preguntas[qIndex] : null;
 
-      // Obtener referencias de la modal
       const elCat = document.getElementById('modal-category');
       const elPts = document.getElementById('modal-points');
       const elTxt = document.getElementById('modal-question-text');
 
-      // Asignar contenido si existe la pregunta o un texto genérico de respaldo
       if (elCat) elCat.textContent = `CATEGORÍA: ${(catObj ? catObj.nombre : 'FINANZAS').toUpperCase()}`;
       if (elPts) elPts.textContent = `$${qObj ? qObj.puntos : (qIndex + 1) * 100} PUNTOS`;
       if (elTxt) elTxt.textContent = qObj ? qObj.pregunta : "¿Cuál es la diferencia entre un deseo y una necesidad financiera?";
 
-      // Renderizar opciones A, B, C, D
       ['A', 'B', 'C', 'D'].forEach(letra => {
         const card = document.getElementById(`opt-card-${letra}`);
         const txt = document.getElementById(`opt-text-${letra}`);
@@ -310,7 +312,6 @@
             if (txt) txt.textContent = qObj.opciones[letra];
             card.style.display = 'flex';
           } else {
-            // Muestra opciones por defecto en caso de no tener opciones en el JSON
             if (txt) {
               if (letra === 'A') txt.textContent = "Opción A: Invertir en necesidades operativas básicas.";
               if (letra === 'B') txt.textContent = "Opción B: Gastar en lujos y deseos superfluos.";
@@ -320,21 +321,49 @@
         }
       });
 
-      // Respuestas y Guía docente
       const ansText = document.getElementById('modal-answer-text');
       const guideText = document.getElementById('modal-guide-text');
       if (ansText) ansText.textContent = qObj ? qObj.respuesta : "Las necesidades garantizan la operación básica, mientras que los deseos son opcionales.";
       if (guideText) guideText.textContent = qObj ? qObj.guia_docente : "Enfocarse en Branch B permite mantener la estabilidad del proyecto.";
 
-      // Reflexión pedagógica para la IA
       const aiText = document.getElementById('ai-reflection-text');
       if (aiText) {
         aiText.textContent = `¡Excelente decisión! Escogiste una muy buena respuesta. Recuerda que al priorizar lo indispensable (Branch B), mantienes la liquidez y la estabilidad operativa de tu proyecto antes de incurrir en gastos superfluos.`;
       }
 
-      // REMOVER CLASE HIDDEN Y FORZAR ESTILOS DE VISIBILIDAD
       qModal.classList.remove('hidden');
       qModal.setAttribute('style', 'display: flex !important; visibility: visible !important; opacity: 1 !important; z-index: 99999 !important;');
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(fuerzaRendimientoAPI, 500);
+    });
+
+    // 4. Voz en Español Latinoamericano
+    function obtenerVozLatinoamericana() {
+      const voices = window.speechSynthesis.getVoices();
+      return voices.find(v => v.lang === 'es-MX') ||
+             voices.find(v => v.lang === 'es-419') ||
+             voices.find(v => v.lang === 'es-US') ||
+             voices.find(v => v.lang.startsWith('es') && !v.lang.includes('ES')) ||
+             voices.find(v => v.lang.startsWith('es'));
+    }
+
+    function hablarReflexion() {
+      const el = document.getElementById('ai-reflection-text');
+      if (!el || !el.innerText) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(el.innerText);
+      const voz = obtenerVozLatinoamericana();
+      if (voz) utterance.voice = voz;
+      utterance.rate = 0.95; 
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = obtenerVozLatinoamericana;
+    }
+  </script>
 </body>
 </html>
