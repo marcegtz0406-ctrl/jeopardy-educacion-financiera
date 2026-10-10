@@ -283,7 +283,7 @@
       });
     }
 
-    // 3. Abrir ventana modal con la pregunta
+   // 3. Abrir ventana modal con la pregunta (Corregido)
     function abrirModalPreguntaDirecto(catIndex, qIndex) {
       const qModal = document.getElementById('question-modal');
       if (!qModal) return;
@@ -292,16 +292,22 @@
       const qObj = catObj && catObj.preguntas ? catObj.preguntas[qIndex] : null;
 
       if (qObj) {
-        document.getElementById('modal-category').textContent = `CATEGORÍA: ${(catObj.nombre || '').toUpperCase()}`;
-        document.getElementById('modal-points').textContent = `$${qObj.puntos} PUNTOS`;
-        document.getElementById('modal-question-text').textContent = qObj.pregunta || "Pregunta no encontrada";
+        // Asignar Categoría, Puntos y Texto de Pregunta
+        const elCat = document.getElementById('modal-category');
+        const elPts = document.getElementById('modal-points');
+        const elTxt = document.getElementById('modal-question-text');
 
+        if (elCat) elCat.textContent = `CATEGORÍA: ${(catObj.nombre || '').toUpperCase()}`;
+        if (elPts) elPts.textContent = `$${qObj.puntos} PUNTOS`;
+        if (elTxt) elTxt.textContent = qObj.pregunta || "Pregunta no encontrada";
+
+        // Renderizar opciones A, B, C, D
         ['A', 'B', 'C', 'D'].forEach(letra => {
           const card = document.getElementById(`opt-card-${letra}`);
           const txt = document.getElementById(`opt-text-${letra}`);
-          if (card && txt) {
+          if (card) {
             if (qObj.opciones && qObj.opciones[letra]) {
-              txt.textContent = qObj.opciones[letra];
+              if (txt) txt.textContent = qObj.opciones[letra];
               card.style.display = 'flex';
             } else {
               card.style.display = 'none';
@@ -309,49 +315,23 @@
           }
         });
 
+        // Respuestas y Guía docente
         const ansText = document.getElementById('modal-answer-text');
         const guideText = document.getElementById('modal-guide-text');
         if (ansText) ansText.textContent = qObj.respuesta || '';
         if (guideText) guideText.textContent = qObj.guia_docente || '';
 
+        // Reflexión de la IA
         const aiText = document.getElementById('ai-reflection-text');
         if (aiText) {
           aiText.textContent = `¡Excelente decisión! Escogiste una muy buena respuesta. Recuerda que al priorizar lo indispensable (Branch B), mantienes la liquidez y la estabilidad operativa de tu proyecto antes de incurrir en gastos superfluos.`;
         }
 
+        // FORZAR MOSTRAR EL MODAL
         qModal.classList.remove('hidden');
         qModal.style.display = 'flex';
+        qModal.style.zIndex = '9999'; // Asegura que se dibuje por encima de todo
       }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(fuerzaRendimientoAPI, 500);
-    });
-
-    // 4. Voz en Español Latino
-    function obtenerVozLatinoamericana() {
-      const voices = window.speechSynthesis.getVoices();
-      return voices.find(v => v.lang === 'es-MX') ||
-             voices.find(v => v.lang === 'es-419') ||
-             voices.find(v => v.lang === 'es-US') ||
-             voices.find(v => v.lang.startsWith('es') && !v.lang.includes('ES')) ||
-             voices.find(v => v.lang.startsWith('es'));
-    }
-
-    function hablarReflexion() {
-      const el = document.getElementById('ai-reflection-text');
-      if (!el || !el.innerText) return;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(el.innerText);
-      const voz = obtenerVozLatinoamericana();
-      if (voz) utterance.voice = voz;
-      utterance.rate = 0.95; 
-      utterance.pitch = 1.0;
-      window.speechSynthesis.speak(utterance);
-    }
-
-    if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = obtenerVozLatinoamericana;
     }
   </script>
 </body>
