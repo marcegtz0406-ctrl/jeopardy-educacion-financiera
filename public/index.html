@@ -215,28 +215,26 @@
       fuerzaRendimientoAPI();
     }
 
-    // 2. Cargar y dibujar el tablero de forma ultra segura
+    let preguntasLocales = null;
+
+    // 2. Cargar y dibujar el tablero de forma ultra segura conectada a host.js
     async function fuerzaRendimientoAPI() {
       const grid = document.getElementById('board-grid');
       if (!grid) return;
-      if (grid.children.length > 0) return; // Evitar duplicados si ya renderizó
+      if (grid.children.length > 0) return;
 
-      let data = null;
-
-      // Intentamos obtener las preguntas de preguntas.json primero, luego /api/questions
       try {
         let res = await fetch('/preguntas.json');
         if (!res.ok) res = await fetch('/api/questions');
         if (res.ok) {
-          data = await res.json();
+          preguntasLocales = await res.json();
         }
       } catch (e) {
-        console.warn("No se pudo obtener el JSON por fetch, usando fallback local...", e);
+        console.warn("No se pudo obtener preguntas.json vía fetch:", e);
       }
 
-      // Si por alguna razón la red falla o no encuentra el archivo JSON, cargamos la estructura directa
-      if (!data || !data.categorias) {
-        data = {
+      if (!preguntasLocales || !preguntasLocales.categorias) {
+        preguntasLocales = {
           categorias: [
             { nombre: "Necesidades vs. Deseos en el Set", icono: "🎬" },
             { nombre: "Branch A: La Trampa de los Lujos", icono: "⚠️" },
@@ -249,33 +247,33 @@
 
       grid.innerHTML = '';
 
-      data.categorias.forEach((cat, catIndex) => {
+      preguntasLocales.categorias.forEach((cat, catIndex) => {
         const col = document.createElement('div');
         col.className = 'category-column';
 
-        // Header Categoría
         const catCard = document.createElement('div');
         catCard.className = 'category-header';
         catCard.innerHTML = `<h2>${cat.icono || '🎬'} ${cat.nombre}</h2>`;
         col.appendChild(catCard);
 
-        // Si data traía preguntas usarlas, sino pintar las 5 tarjetas ($100 a $500)
-        const preguntasList = cat.preguntas || [
+        const listaPreguntas = cat.preguntas || [
           { puntos: 100 }, { puntos: 200 }, { puntos: 300 }, { puntos: 400 }, { puntos: 500 }
         ];
 
-        preguntasList.forEach((q, qIndex) => {
+        listaPreguntas.forEach((q, qIndex) => {
           const pointCard = document.createElement('div');
           pointCard.className = 'question-card';
           pointCard.id = `card-${catIndex}-${qIndex}`;
           pointCard.innerHTML = `<span class="points">$${q.puntos}</span>`;
 
           pointCard.onclick = () => {
+            pointCard.classList.add('answered');
+
             if (typeof socket !== 'undefined' && socket && socket.connected) {
               socket.emit('open-question', { catIndex, qIndex });
-            } else if (typeof renderQuestionModal === 'function') {
-              renderQuestionModal(catIndex, qIndex);
-            }
+            } 
+            
+            abrirModalPreguntaDirecto(catIndex, qIndex);
           };
 
           col.appendChild(pointCard);
@@ -285,11 +283,52 @@
       });
     }
 
+    // 3. Abrir ventana modal con la pregunta
+    function abrirModalPreguntaDirecto(catIndex, qIndex) {
+      const qModal = document.getElementById('question-modal');
+      if (!qModal) return;
+
+      const catObj = preguntasLocales && preguntasLocales.categorias ? preguntasLocales.categorias[catIndex] : null;
+      const qObj = catObj && catObj.preguntas ? catObj.preguntas[qIndex] : null;
+
+      if (qObj) {
+        document.getElementById('modal-category').textContent = `CATEGORÍA: ${(catObj.nombre || '').toUpperCase()}`;
+        document.getElementById('modal-points').textContent = `$${qObj.puntos} PUNTOS`;
+        document.getElementById('modal-question-text').textContent = qObj.pregunta || "Pregunta no encontrada";
+
+        ['A', 'B', 'C', 'D'].forEach(letra => {
+          const card = document.getElementById(`opt-card-${letra}`);
+          const txt = document.getElementById(`opt-text-${letra}`);
+          if (card && txt) {
+            if (qObj.opciones && qObj.opciones[letra]) {
+              txt.textContent = qObj.opciones[letra];
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          }
+        });
+
+        const ansText = document.getElementById('modal-answer-text');
+        const guideText = document.getElementById('modal-guide-text');
+        if (ansText) ansText.textContent = qObj.respuesta || '';
+        if (guideText) guideText.textContent = qObj.guia_docente || '';
+
+        const aiText = document.getElementById('ai-reflection-text');
+        if (aiText) {
+          aiText.textContent = `¡Excelente decisión! Escogiste una muy buena respuesta. Recuerda que al priorizar lo indispensable (Branch B), mantienes la liquidez y la estabilidad operativa de tu proyecto antes de incurrir en gastos superfluos.`;
+        }
+
+        qModal.classList.remove('hidden');
+        qModal.style.display = 'flex';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(fuerzaRendimientoAPI, 500);
     });
 
-    // 3. Audio en Español Latino
+    // 4. Voz en Español Latino
     function obtenerVozLatinoamericana() {
       const voices = window.speechSynthesis.getVoices();
       return voices.find(v => v.lang === 'es-MX') ||
