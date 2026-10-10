@@ -206,58 +206,75 @@
       </div>
     </div>
   </div>
-
-  <script src="host.js"></script>
+<script src="host.js"></script>
   <script>
+    // 1. Oculta el modal de instrucciones y dibuja el tablero
     function cerrarInstrucciones() {
-      document.getElementById('modalInstructions').style.display = 'none';
+      const modal = document.getElementById('modalInstructions');
+      if (modal) modal.style.display = 'none';
+      
+      // Construir el tablero inmediatamente al presionar el botón
       fuerzaRendimientoAPI();
     }
 
+    // 2. Función para cargar y dibujar las celdas del tablero
     async function fuerzaRendimientoAPI() {
       const grid = document.getElementById('board-grid');
-      if (!grid || grid.children.length > 0) return;
+      if (!grid) return;
+
+      // Si el tablero ya tiene celdas cargadas, no lo volvemos a dibujar
+      if (grid.children.length > 0) return;
 
       try {
         const res = await fetch('/api/questions');
+        if (!res.ok) throw new Error('No se pudo obtener /api/questions');
         const data = await res.json();
 
-        grid.innerHTML = '';
+        if (!data || !data.categorias) return;
+
+        grid.innerHTML = ''; // Limpiamos el contenedor por seguridad
+
         data.categorias.forEach((cat, catIndex) => {
-          // Usamos la clase de CSS exacta: category-column
+          // Crear columna por categoría
           const col = document.createElement('div');
           col.className = 'category-column';
 
-          // Usamos la clase de CSS exacta: category-header con un <h2>
+          // Encabezado con título e ícono de la categoría
           const catCard = document.createElement('div');
           catCard.className = 'category-header';
           catCard.innerHTML = `<h2>${cat.icono || '🎬'} ${cat.nombre}</h2>`;
           col.appendChild(catCard);
 
+          // Tarjetas de puntos ($100, $200, etc.)
           cat.preguntas.forEach((q, qIndex) => {
-            // Usamos las clases de CSS exactas: question-card y points
             const pointCard = document.createElement('div');
             pointCard.className = 'question-card';
+            pointCard.id = `card-${catIndex}-${qIndex}`;
             pointCard.innerHTML = `<span class="points">$${q.puntos}</span>`;
+            
+            // Evento al presionar sobre la tarjeta de dinero
             pointCard.onclick = () => {
-              if (typeof socket !== 'undefined') {
+              if (typeof socket !== 'undefined' && socket.connected) {
                 socket.emit('open-question', { catIndex, qIndex });
               }
             };
+
             col.appendChild(pointCard);
           });
 
           grid.appendChild(col);
         });
       } catch (err) {
-        console.error("Error al cargar via API:", err);
+        console.error("Error al cargar el tablero vía API:", err);
       }
     }
 
+    // 3. Intenta cargar automáticamente en caso de que se recargue la página sin modal
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(fuerzaRendimientoAPI, 400);
+      setTimeout(fuerzaRendimientoAPI, 600);
     });
 
+    // 4. Configuración de Voz en Español Latino
     function obtenerVozLatinoamericana() {
       const voices = window.speechSynthesis.getVoices();
       return voices.find(v => v.lang === 'es-MX') ||
@@ -274,13 +291,14 @@
       const utterance = new SpeechSynthesisUtterance(el.innerText);
       const voz = obtenerVozLatinoamericana();
       if (voz) utterance.voice = voz;
-      utterance.rate = 0.95; utterance.pitch = 1.0;
+      utterance.rate = 0.95; 
+      utterance.pitch = 1.0;
       window.speechSynthesis.speak(utterance);
     }
 
     if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
       speechSynthesis.onvoiceschanged = obtenerVozLatinoamericana;
-    }
-  </script>
-</body>
-</html>
+   301    }
+302  </script>
+303  </body>
+304  </html>
